@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using AdventOfCode.Console;
 
-var inputFolder = "InputFiles";
+var inputFolder = Environment.GetEnvironmentVariable("INPUT_FOLDER");
 
 #region Day 1 - Trebuchet
 
