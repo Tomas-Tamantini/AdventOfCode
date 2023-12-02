@@ -5,7 +5,7 @@ namespace AdventOfCode.Tests
     public class TestDay1Trebuchet
     {
         [Fact]
-        public void TestStringWithNoDigitsAddsToZero()
+        public void TestStringWithNoDigitsAddsToZeroWhenNotConsideringSpelledOutDigits()
         {
             var stringWithNoDigits = "abc";
             var numericValue = Trebuchet.ExtractNumericValue(stringWithNoDigits);
@@ -13,7 +13,7 @@ namespace AdventOfCode.Tests
         }
 
         [Fact]
-        public void TestStringWithSingleDigitCorrespondsToThatDigitTwice()
+        public void TestStringWithSingleDigitCorrespondsToThatDigitTwiceWhenNotConsideringSpelledOutDigits()
         {
             var stringWithDigits = "sdfds4asdf";
             var numericValue = Trebuchet.ExtractNumericValue(stringWithDigits);
@@ -21,7 +21,7 @@ namespace AdventOfCode.Tests
         }
 
         [Fact]
-        public void TestStringWithTwoDigitsCorrespondToThoseTwoDigitsConcatenated()
+        public void TestStringWithTwoDigitsCorrespondToThoseTwoDigitsConcatenatedWhenNotConsideringSpelledOutDigits()
         {
             var stringWithDigits = "sd1fd3sa";
             var numericValue = Trebuchet.ExtractNumericValue(stringWithDigits);
@@ -29,11 +29,21 @@ namespace AdventOfCode.Tests
         }
 
         [Fact]
+        public void TestDigitsCanBeSpelledOut()
+        {
+            var spelledOutDigits = "asdfouras7dfiveight";
+            var numericValue = Trebuchet.ExtractNumericValue(spelledOutDigits, considerSpelledOutDigits: true);
+            Assert.Equal(48, numericValue);
+        }
+
+        [Fact]
         public void TestListOfStringsHaveTheirValuesAddedUp()
         {
-            var listOfStrings = new List<string> { "", "1", "sd1fd3sa", "0sr78", "4321" };
-            var numericValue = Trebuchet.AddUpNumericValues(listOfStrings);
-            Assert.Equal(73, numericValue);
+            var listOfStrings = new List<string> { "", "1", "sd1fd3sa", "0sr78", "4321", "twfiveight" };
+            var numericValueWithoutSpelledOutDigits = Trebuchet.AddUpNumericValues(listOfStrings);
+            Assert.Equal(73, numericValueWithoutSpelledOutDigits);
+            var numericValueWithSpelledOutDigits = Trebuchet.AddUpNumericValues(listOfStrings, considerSpelledOutDigits: true);
+            Assert.Equal(131, numericValueWithSpelledOutDigits);
         }
     }
 }
