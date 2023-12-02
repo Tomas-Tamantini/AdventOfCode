@@ -2,19 +2,13 @@ using System.Text;
 
 namespace AdventOfCode.Console
 {
-    public record CubeCollection(int Red, int Green, int Blue);
+    public record CubeCollection(int Red, int Green, int Blue)
+    {
+        public int Power => Red * Green * Blue;
+    };
     public record CubeGame(int Id, List<CubeCollection> Handfuls);
     public class CubeConundrum
     {
-        public static int SumOfIdsOfAllPossibleGamesFromTextFile(CubeCollection bag, string filePath)
-        {
-            var games = new List<CubeGame>();
-            var lines = File.ReadAllLines(filePath, Encoding.UTF8);
-            foreach (var line in lines)
-                games.Add(ParseGame(line));
-            return SumOfIdsOfAllPossibleGames(bag, games);
-        }
-
         public static bool GameIsPossible(CubeCollection bag, CubeGame game)
         {
             foreach (var handful in game.Handfuls)
@@ -56,6 +50,26 @@ namespace AdventOfCode.Console
             var blue = colorCounts.GetValueOrDefault("blue", 0);
 
             return new CubeCollection(red, green, blue);
+        }
+
+        public static CubeCollection MinimumBag(CubeGame game)
+        {
+            if (game.Handfuls.Count == 0)
+                return new CubeCollection(Red: 0, Green: 0, Blue: 0);
+
+            var maxRed = game.Handfuls.Max(handful => handful.Red);
+            var maxGreen = game.Handfuls.Max(handful => handful.Green);
+            var maxBlue = game.Handfuls.Max(handful => handful.Blue);
+
+            return new CubeCollection(maxRed, maxGreen, maxBlue);
+        }
+
+        public static int SumOfPowersOfMinBags(List<CubeGame> games)
+        {
+            var sum = 0;
+            foreach (var game in games)
+                sum += MinimumBag(game).Power;
+            return sum;
         }
     }
 }
