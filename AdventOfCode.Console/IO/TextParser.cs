@@ -5,17 +5,12 @@ namespace AdventOfCode.Console.IO
 {
     public class TextParser
     {
-        public static IEnumerable<string> ParseTrebuchetFile(string fileName)
-        {
-            return File.ReadAllLines(fileName);
-        }
-
         public static List<CubeGame> ParseCubeGamesFromTextFile(string fileName)
         {
             var games = new List<CubeGame>();
             var lines = File.ReadAllLines(fileName, Encoding.UTF8);
             foreach (var line in lines)
-                games.Add(TextParser.ParseCubeGame(line));  
+                games.Add(TextParser.ParseCubeGame(line));
             return games;
         }
 
