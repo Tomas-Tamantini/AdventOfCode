@@ -9,22 +9,22 @@ namespace AdventOfCode.Console.Models
             Lines = lines;
         }
 
-        private IEnumerable<char> SurroundingCharacters(int lineIdx, int leftIdx, int rightIdx)
+        private IEnumerable<char> SurroundingCharacters(int lineIdx, int numberStartIdx, int numberEndIdx)
         {
             for (var surroundingLineIdx = lineIdx - 1; surroundingLineIdx <= lineIdx + 1; surroundingLineIdx += 2)
             {
                 if (surroundingLineIdx < 0 || surroundingLineIdx >= Lines.Count)
                     continue;
-                for (var i = leftIdx; i <= rightIdx; i++)
+                for (var i = numberStartIdx - 1; i <= numberEndIdx + 1; i++)
                     if (i >= 0 && i < Lines[surroundingLineIdx].Length)
                         yield return Lines[surroundingLineIdx][i];
             }
 
-            if (leftIdx - 1 >= 0)
-                yield return Lines[lineIdx][leftIdx - 1];
+            if (numberStartIdx - 1 >= 0)
+                yield return Lines[lineIdx][numberStartIdx - 1];
 
-            if (rightIdx + 1 < Lines[lineIdx].Length)
-                yield return Lines[lineIdx][rightIdx + 1];
+            if (numberEndIdx + 1 < Lines[lineIdx].Length)
+                yield return Lines[lineIdx][numberEndIdx + 1];
         }
 
         public IEnumerable<int> PartNumbers()
