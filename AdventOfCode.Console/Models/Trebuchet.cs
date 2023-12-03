@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace AdventOfCode.Console
+namespace AdventOfCode.Console.Models
 {
     public class Trebuchet
     {
@@ -14,23 +14,17 @@ namespace AdventOfCode.Console
                 int digit = GetDigit(line, i, considerSpelledOutDigits);
                 if (digit >= 0)
                 {
-                    firstDigit = (firstDigit < 0) ? digit : firstDigit;
+                    firstDigit = firstDigit < 0 ? digit : firstDigit;
                     lastDigit = digit;
                 }
             }
 
-            return (firstDigit < 0) ? 0 : firstDigit * 10 + lastDigit;
+            return firstDigit < 0 ? 0 : firstDigit * 10 + lastDigit;
         }
 
         static public int AddUpNumericValues(IEnumerable<string> lines, bool considerSpelledOutDigits = false)
         {
             return lines.Select(line => ExtractNumericValue(line, considerSpelledOutDigits)).Sum();
-        }
-
-        static public int AddUpNumericValuesFromTextFile(string path, bool considerSpelledOutDigits = false)
-        {
-            var values = File.ReadAllLines(path);
-            return AddUpNumericValues(values, considerSpelledOutDigits);
         }
 
         private static int GetDigit(string line, int currentIdx, bool considerSpelledOutDigits)

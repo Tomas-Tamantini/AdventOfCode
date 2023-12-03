@@ -1,5 +1,3 @@
-
-
 namespace AdventOfCode.Tests
 {
     public class TestDay1Trebuchet
