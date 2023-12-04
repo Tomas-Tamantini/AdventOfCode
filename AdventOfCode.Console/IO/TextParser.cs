@@ -10,7 +10,7 @@ namespace AdventOfCode.Console.IO
             var games = new List<CubeGame>();
             var lines = File.ReadAllLines(fileName, Encoding.UTF8);
             foreach (var line in lines)
-                games.Add(TextParser.ParseCubeGame(line));
+                games.Add(ParseCubeGame(line));
             return games;
         }
 
@@ -38,6 +38,15 @@ namespace AdventOfCode.Console.IO
             var blue = colorCounts.GetValueOrDefault("blue", 0);
 
             return new CubeCollection(red, green, blue);
+        }
+
+        public static List<ScratchcardGame> ParseScratchcardsFromTextFile(string fileName)
+        {
+            var games = new List<ScratchcardGame>();
+            var lines = File.ReadAllLines(fileName, Encoding.UTF8);
+            foreach (var line in lines)
+                games.Add(ParseScratchcard(line));
+            return games;
         }
 
         public static ScratchcardGame ParseScratchcard(string scratchcardStr)

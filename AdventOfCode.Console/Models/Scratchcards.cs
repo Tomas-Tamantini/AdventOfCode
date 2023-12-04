@@ -6,6 +6,18 @@ namespace AdventOfCode.Console.Models
     }
     public class Scratchcards
     {
+        private readonly List<ScratchcardGame> games;
+
+        public Scratchcards(List<ScratchcardGame> scratchcardGames)
+        {
+            games = scratchcardGames;
+        }
+
+        public int TotalPoints()
+        {
+            return games.Sum(NumPoints);
+        }
+
         public static int NumPoints(ScratchcardGame scratchcard)
         {
             var numMatches = scratchcard.NumMatches;

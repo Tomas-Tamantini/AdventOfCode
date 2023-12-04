@@ -43,13 +43,8 @@ Console.WriteLine($"Day 3 - Gear Ratios - Sum ofproduct of gears: {sumOfGearRati
 #region Day 4 - Scratchcards
 
 var scratchcardsInputPath = $"{inputFolder}/ScratchcardsInput.txt";
-lines = File.ReadAllLines(scratchcardsInputPath);
-var numPoints = 0;
-foreach (var line in lines)
-{
-    var scratchcard = TextParser.ParseScratchcard(line);
-    numPoints += Scratchcards.NumPoints(scratchcard);
-}
-Console.WriteLine($"Day 4 - Scratchcards - Total points: {numPoints}");
+var scratchcardGames = TextParser.ParseScratchcardsFromTextFile(scratchcardsInputPath);
+var scratchcards = new Scratchcards(scratchcardGames);
+Console.WriteLine($"Day 4 - Scratchcards - Total points: {scratchcards.TotalPoints()}");
 
 #endregion
