@@ -46,5 +46,7 @@ var scratchcardsInputPath = $"{inputFolder}/ScratchcardsInput.txt";
 var scratchcardGames = TextParser.ParseScratchcardsFromTextFile(scratchcardsInputPath);
 var scratchcards = new Scratchcards(scratchcardGames);
 Console.WriteLine($"Day 4 - Scratchcards - Total points: {scratchcards.TotalPoints()}");
+Console.WriteLine($"Day 4 - Scratchcards - Total cards: {scratchcards.CardsMultiplicity().Sum()}");
+
 
 #endregion

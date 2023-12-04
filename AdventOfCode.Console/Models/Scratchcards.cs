@@ -18,6 +18,21 @@ namespace AdventOfCode.Console.Models
             return games.Sum(NumPoints);
         }
 
+        public List<int> CardsMultiplicity()
+        {
+            var multiplicity = Enumerable.Repeat(1, games.Count).ToList();
+            for (var i = 0; i < games.Count; i++)
+            {
+                var numMatches = games[i].NumMatches;
+                for (var j = i + 1; j < i + 1 + numMatches; j++)
+                {
+                    if (j >= games.Count) break;
+                    multiplicity[j] += multiplicity[i];
+                }
+            }
+            return multiplicity;
+        }
+
         public static int NumPoints(ScratchcardGame scratchcard)
         {
             var numMatches = scratchcard.NumMatches;
