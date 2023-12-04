@@ -17,7 +17,7 @@ namespace AdventOfCode.Console.IO
         public static CubeGame ParseCubeGame(string line)
         {
             var gameParts = line.Split(":");
-            var gameId = int.Parse(gameParts[0].Split(" ")[1]);
+            var gameId = int.Parse(SplitBySpace(gameParts[0])[1]);
             var handfuls = gameParts[1].Split(";")
                                       .Select(handfulStr => ParseHandful(handfulStr))
                                       .ToList();
@@ -43,7 +43,7 @@ namespace AdventOfCode.Console.IO
         public static ScratchcardGame ParseScratchcard(string scratchcardStr)
         {
             var gameParts = scratchcardStr.Split(":");
-            var gameId = int.Parse(gameParts[0].Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries)[1]);
+            var gameId = int.Parse(SplitBySpace(gameParts[0])[1]);
             var numbers = gameParts[1].Split("|");
             var winningNumbers = ParseHashset(numbers[0]);
             var myNumbers = ParseHashset(numbers[1]);
@@ -52,8 +52,12 @@ namespace AdventOfCode.Console.IO
 
         private static HashSet<int> ParseHashset(string numbersSeparatedBySpace)
         {
-            string[] numbers = numbersSeparatedBySpace.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-            return new HashSet<int>(numbers.Select(int.Parse));
+            return new HashSet<int>(SplitBySpace(numbersSeparatedBySpace).Select(int.Parse));
+        }
+
+        private static string[] SplitBySpace(string text)
+        {
+            return text.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }
