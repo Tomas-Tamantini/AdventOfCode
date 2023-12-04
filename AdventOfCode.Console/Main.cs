@@ -39,3 +39,17 @@ var sumOfGearRatios = gears.Sum(gear => gear.Item1 * gear.Item2);
 Console.WriteLine($"Day 3 - Gear Ratios - Sum ofproduct of gears: {sumOfGearRatios}");
 
 #endregion
+
+#region Day 4 - Scratchcards
+
+var scratchcardsInputPath = $"{inputFolder}/ScratchcardsInput.txt";
+lines = File.ReadAllLines(scratchcardsInputPath);
+var numPoints = 0;
+foreach (var line in lines)
+{
+    var scratchcard = TextParser.ParseScratchcard(line);
+    numPoints += Scratchcards.NumPoints(scratchcard);
+}
+Console.WriteLine($"Day 4 - Scratchcards - Total points: {numPoints}");
+
+#endregion

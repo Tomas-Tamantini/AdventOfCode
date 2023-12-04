@@ -39,5 +39,21 @@ namespace AdventOfCode.Console.IO
 
             return new CubeCollection(red, green, blue);
         }
+
+        public static ScratchcardGame ParseScratchcard(string scratchcardStr)
+        {
+            var gameParts = scratchcardStr.Split(":");
+            var gameId = int.Parse(gameParts[0].Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries)[1]);
+            var numbers = gameParts[1].Split("|");
+            var winningNumbers = ParseHashset(numbers[0]);
+            var myNumbers = ParseHashset(numbers[1]);
+            return new ScratchcardGame(gameId, winningNumbers, myNumbers);
+        }
+
+        private static HashSet<int> ParseHashset(string numbersSeparatedBySpace)
+        {
+            string[] numbers = numbersSeparatedBySpace.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            return new HashSet<int>(numbers.Select(int.Parse));
+        }
     }
 }
