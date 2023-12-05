@@ -44,12 +44,17 @@ namespace AdventOfCode.Console.Models
     {
         private readonly Dictionary<string, SourceDestinationMapper> mappers;
 
+        public ChainMapper()
+        {
+            mappers = new Dictionary<string, SourceDestinationMapper>();
+        }
+
         public ChainMapper(List<SourceDestinationMapper> sourceDestinationMappers)
         {
             mappers = sourceDestinationMappers.ToDictionary(mapper => mapper.SourceName);
         }
 
-        public ulong Map(string sourceName, string destinationName, ulong value)
+        public virtual ulong Map(string sourceName, string destinationName, ulong value)
         {
             if (sourceName == destinationName) return value;
             string currentSource = sourceName;
@@ -62,6 +67,23 @@ namespace AdventOfCode.Console.Models
                 if (map.DestinationName == destinationName) return currentValue;
                 currentSource = map.DestinationName;
             }
+        }
+    }
+
+    public class Fertilizer
+    {
+        private readonly ChainMapper chainMapper;
+        private readonly List<ulong> seeds;
+
+        public Fertilizer(List<ulong> seeds, ChainMapper chainMapper)
+        {
+            this.seeds = seeds;
+            this.chainMapper = chainMapper;
+        }
+
+        public ulong LowestLocationNumber()
+        {
+            return seeds.Min(seed => chainMapper.Map("seed", "location", seed));
         }
     }
 }

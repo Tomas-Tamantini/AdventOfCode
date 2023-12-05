@@ -1,3 +1,5 @@
+using Moq;
+
 namespace AdventOfCode.Tests
 {
     public class TestDay5Fertilizer
@@ -90,6 +92,30 @@ namespace AdventOfCode.Tests
             Assert.Throws<ArgumentException>(() => chainMapper.Map("B", "A", 0));
             Assert.Throws<ArgumentException>(() => chainMapper.Map("X", "Y", 0));
             Assert.Throws<ArgumentException>(() => chainMapper.Map("C", "W", 0));
+        }
+
+        [Fact]
+        public void TestFertilizerCanReturnLowestLocationNumberOfAllItsSeeds()
+        {
+            var mockMapper = new Mock<ChainMapper>();
+            mockMapper.Setup(m => m.Map(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ulong>())).Returns(
+                (string source, string destination, ulong value) =>
+                {
+                    return value switch
+                    {
+                        1 => 10,
+                        2 => 7,
+                        3 => 5000,
+                        _ => 500000000000UL,
+                    };
+                }
+            );
+
+            List<ulong> seeds = new() { 1, 2, 3 };
+            Fertilizer fertilizer = new(seeds, mockMapper.Object);
+            var lowestLocationNumber = fertilizer.LowestLocationNumber();
+            Assert.Equal(7UL, lowestLocationNumber);
+            mockMapper.Verify(m => m.Map("seed", "location", It.IsAny<ulong>()));
         }
     }
 }
