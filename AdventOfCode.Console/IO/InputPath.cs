@@ -12,7 +12,14 @@ namespace AdventOfCode.Console.IO
 
         public string GetPath(int day)
         {
-            List<string> inputFiles = new() { "Trebuchet", "CubeConundrum", "GearRatios", "Scratchcards", };
+            List<string> inputFiles = new()
+            {
+                "Trebuchet",
+                "CubeConundrum",
+                "GearRatios",
+                "Scratchcards",
+                "Fertilizer"
+            };
             return Path.Combine(inputFolder, $"{inputFiles[day - 1]}Input.txt");
         }
     }

@@ -43,5 +43,12 @@ var scratchcards = new Scratchcards(scratchcardGames);
 Console.WriteLine($"Day 4 - Scratchcards - Total points: {scratchcards.TotalPoints()}");
 Console.WriteLine($"Day 4 - Scratchcards - Total cards: {scratchcards.CardsMultiplicity().Sum()}");
 
+#endregion
+
+#region Day 5 - Fertilizer
+
+var fileText = File.ReadAllText(input.GetPath(day: 5));
+var fertilizer = TextParser.ParseFertilizer(fileText);
+Console.WriteLine($"Day 4 - Fertilizer - Lowest location number: {fertilizer.LowestLocationNumber()}");
 
 #endregion

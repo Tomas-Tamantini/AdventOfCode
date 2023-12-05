@@ -68,5 +68,59 @@ namespace AdventOfCode.Console.IO
         {
             return text.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
         }
+
+        public static Fertilizer ParseFertilizer(string fertilizerText)
+        {
+            string[] lines = fertilizerText.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            List<ulong> seeds = new();
+            List<SourceDestinationMapper> mappers = new();
+            List<string> lineAccumulator = new();
+            foreach (var line in lines)
+            {
+                if (line.Contains("seeds:")) seeds = ParseFertilizerSeeds(line);
+                else if (line.Contains("map:"))
+                {
+                    if (lineAccumulator.Count > 0) mappers.Add(ParseSourceDestinationMapper(lineAccumulator));
+                    lineAccumulator.Clear();
+                    lineAccumulator.Add(line);
+                }
+                else lineAccumulator.Add(line);
+            }
+            if (lineAccumulator.Count > 0) mappers.Add(ParseSourceDestinationMapper(lineAccumulator));
+            return new Fertilizer(seeds, new ChainMapper(mappers));
+        }
+
+        public static List<ulong> ParseFertilizerSeeds(string line)
+        {
+            var seedsText = line.Split(":")[1];
+            var seedsAsStr = SplitBySpace(seedsText);
+            return seedsAsStr.Select(ulong.Parse).ToList();
+        }
+
+        public static SourceDestinationMapper ParseSourceDestinationMapper(List<string> lines)
+        {
+            var sourceName = "";
+            var destinationName = "";
+            var rangeMappers = new List<RangeMapper>();
+            foreach (var line in lines)
+            {
+                if (line.Contains("map"))
+                {
+                    string[] sourceDestination = SplitBySpace(line)[0].Split("-to-");
+                    (sourceName, destinationName) = (sourceDestination[0], sourceDestination[1]);
+                }
+                else
+                {
+                    var rangeDef = SplitBySpace(line);
+                    if (rangeDef.Length == 3)
+                    {
+                        var range = rangeDef.Select(r => ulong.Parse(r)).ToList();
+                        RangeMapper rangeMapper = new(sourceStart: range[1], destinationStart: range[0], rangeLength: range[2]);
+                        rangeMappers.Add(rangeMapper);
+                    }
+                }
+            }
+            return new SourceDestinationMapper(sourceName, destinationName, rangeMappers);
+        }
     }
 }
