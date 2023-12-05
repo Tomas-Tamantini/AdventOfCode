@@ -117,5 +117,31 @@ namespace AdventOfCode.Tests
             Assert.Equal(7UL, lowestLocationNumber);
             mockMapper.Verify(m => m.Map("seed", "location", It.IsAny<ulong>()));
         }
+
+        [Fact]
+        public void TestFertilizerCanReturnLowestLocationNumberConsideringSeedsAsRanges()
+        {
+            var mockMapper = new Mock<ChainMapper>();
+            mockMapper.Setup(m => m.Map(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ulong>())).Returns(
+                (string source, string destination, ulong value) =>
+                {
+                    return value switch
+                    {
+                        1 => 10,
+                        2 => 7,
+                        3 => 5000,
+                        109 => 3,
+                        110 => 2,
+                        _ => 500000000000UL,
+                    };
+                }
+            );
+
+            List<ulong> seeds = new() { 1, 5, 100, 10 };
+            Fertilizer fertilizer = new(seeds, mockMapper.Object);
+            var lowestLocationNumber = fertilizer.LowestLocationNumberWithSeedsAsRange();
+            Assert.Equal(3UL, lowestLocationNumber);
+            mockMapper.Verify(m => m.Map("seed", "location", It.IsAny<ulong>()));
+        }
     }
 }

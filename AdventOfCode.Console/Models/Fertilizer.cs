@@ -1,5 +1,11 @@
 namespace AdventOfCode.Console.Models
 {
+    public class UlongInterval
+    {
+        public ulong Start { get; init; }
+        public ulong End { get; init; }
+    }
+
     public class RangeMapper
     {
         private readonly ulong sourceStart;
@@ -75,15 +81,40 @@ namespace AdventOfCode.Console.Models
         private readonly ChainMapper chainMapper;
         private readonly List<ulong> seeds;
 
+
         public Fertilizer(List<ulong> seeds, ChainMapper chainMapper)
         {
             this.seeds = seeds;
             this.chainMapper = chainMapper;
+
+
+
         }
 
         public ulong LowestLocationNumber()
         {
             return seeds.Min(seed => chainMapper.Map("seed", "location", seed));
+        }
+
+        public ulong LowestLocationNumberWithSeedsAsRange()
+        {
+            List<UlongInterval> seedIntervals = new();
+            for (var i = 0; i < seeds.Count; i += 2)
+            {
+                var start = seeds[i];
+                var end = i + 1 < seeds.Count ? seeds[i] + seeds[i + 1] - 1 : seeds[i];
+                seedIntervals.Add(new UlongInterval { Start = start, End = end });
+            }
+            var lowestLocationNumber = 5000000000UL;
+            foreach (var seedInterval in seedIntervals)
+            {
+                for (ulong s = seedInterval.Start; s <= seedInterval.End; s++)
+                {
+                    var locationNumber = chainMapper.Map("seed", "location", s);
+                    lowestLocationNumber = Math.Min(lowestLocationNumber, locationNumber);
+                }
+            }
+            return lowestLocationNumber;
         }
     }
 }
