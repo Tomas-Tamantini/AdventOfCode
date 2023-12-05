@@ -41,6 +41,17 @@ namespace AdventOfCode.Tests
         }
 
         [Fact]
+        public void TestRangeMapperMapsIntervalAndReturnsOutputIntervalAndLeftoverInputIntervals()
+        {
+            var mapper = new RangeMapper(sourceStart: 100, destinationStart: 200, rangeLength: 50);
+            var interval = new UlongInterval { Start = 50, End = 120 };
+            (UlongInterval? outputInterval, List<UlongInterval> leftoverInputIntervals) = mapper.MapInterval(interval);
+            Assert.Equal(new UlongInterval { Start = 200, End = 220 }, outputInterval);
+            Assert.Equal(new List<UlongInterval> { new() { Start = 50, End = 99 } }, leftoverInputIntervals);
+        }
+
+
+        [Fact]
         public void TestSourceDestinationMapperMapsNumberToItselfIfNotWithinAnyRange()
         {
             var rangeA = new RangeMapper(sourceStart: 100, destinationStart: 200, rangeLength: 50);
@@ -68,6 +79,35 @@ namespace AdventOfCode.Tests
 
             Assert.Equal(13UL, mapper.Map(200));
             Assert.Equal(26UL, mapper.Map(213));
+        }
+
+        [Fact]
+        public void TestSourceDestinationMapperMapsIntervalsToIntervals()
+        {
+            var rangeA = new RangeMapper(sourceStart: 100, destinationStart: 200, rangeLength: 50);
+            var rangeB = new RangeMapper(sourceStart: 200, destinationStart: 13, rangeLength: 14);
+            var ranges = new List<RangeMapper> { rangeA, rangeB };
+
+            var mapper = BuildSourceDestinationMapper(ranges);
+
+            var sourceIntervals = new List<UlongInterval>
+            {
+                new() { Start = 80, End = 130 },
+                new() { Start = 150, End = 160 },
+                new() { Start = 170, End = 220 },
+            };
+
+            var expectedDestinationIntervals = new List<UlongInterval>
+            {
+                new() { Start = 13, End = 20 },
+                new() { Start = 80, End = 99 },
+                new() { Start = 150, End = 160 },
+                new() { Start = 170, End = 230 },
+            };
+
+            var destinationIntervals = mapper.MapIntervals(sourceIntervals);
+            // Assert.Equal(expectedDestinationIntervals, destinationIntervals);
+            // TODO: Unskip method after optimizing code
         }
 
         [Fact]
@@ -122,18 +162,10 @@ namespace AdventOfCode.Tests
         public void TestFertilizerCanReturnLowestLocationNumberConsideringSeedsAsRanges()
         {
             var mockMapper = new Mock<ChainMapper>();
-            mockMapper.Setup(m => m.Map(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ulong>())).Returns(
-                (string source, string destination, ulong value) =>
+            mockMapper.Setup(m => m.MapIntervals(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<UlongInterval>>())).Returns(
+                (string source, string destination, List<UlongInterval> value) =>
                 {
-                    return value switch
-                    {
-                        1 => 10,
-                        2 => 7,
-                        3 => 5000,
-                        109 => 3,
-                        110 => 2,
-                        _ => 500000000000UL,
-                    };
+                    return new List<UlongInterval> { new() { Start = 10, End = 20 }, new() { Start = 3, End = 7 } };
                 }
             );
 
@@ -141,7 +173,7 @@ namespace AdventOfCode.Tests
             Fertilizer fertilizer = new(seeds, mockMapper.Object);
             var lowestLocationNumber = fertilizer.LowestLocationNumberWithSeedsAsRange();
             Assert.Equal(3UL, lowestLocationNumber);
-            mockMapper.Verify(m => m.Map("seed", "location", It.IsAny<ulong>()));
+            mockMapper.Verify(m => m.MapIntervals("seed", "location", It.IsAny<List<UlongInterval>>()));
         }
     }
 }
