@@ -1,12 +1,11 @@
 ﻿using AdventOfCode.Console.Models;
 using AdventOfCode.Console.IO;
 
-var inputFolder = Environment.GetEnvironmentVariable("INPUT_FOLDER");
+var input = new InputPath();
 
 #region Day 1 - Trebuchet
 
-var trebuchetInputPath = $"{inputFolder}/TrebuchetInput.txt";
-var lines = File.ReadAllLines(trebuchetInputPath);
+var lines = File.ReadAllLines(input.GetPath(day: 1));
 var valueWithoutSpelledOutDigits = Trebuchet.AddUpNumericValues(lines, considerSpelledOutDigits: false);
 Console.WriteLine($"Day 1 - Trebuchet - Sum of all numeric values w/o spelled out digits: {valueWithoutSpelledOutDigits}");
 var valueWithSpelledOutDigits = Trebuchet.AddUpNumericValues(lines, considerSpelledOutDigits: true);
@@ -16,10 +15,8 @@ Console.WriteLine($"Day 1 - Trebuchet - Sum of all numeric values w/ spelled out
 
 #region Day 2 - Cube Conundrum
 
-var cubeConundrumInputPath = $"{inputFolder}/CubeConundrumInput.txt";
 var bag = new CubeCollection(Red: 12, Green: 13, Blue: 14);
-
-var games = TextParser.ParseCubeGamesFromTextFile(cubeConundrumInputPath);
+var games = TextParser.ParseCubeGamesFromTextFile(input.GetPath(day: 2));
 var sumOfIdsOfAllPossibleGames = CubeConundrum.SumOfIdsOfAllPossibleGames(bag, games);
 Console.WriteLine($"Day 2 - Cube Conundrum - Sum of ids of all possible games: {sumOfIdsOfAllPossibleGames}");
 var sumOfAllPowers = CubeConundrum.SumOfPowersOfMinBags(games);
@@ -29,8 +26,7 @@ Console.WriteLine($"Day 2 - Cube Conundrum - Sum of powers of all minimum bags: 
 
 #region Day 3 - Gear Ratios
 
-var gearRatiosInputPath = $"{inputFolder}/GearRatiosInput.txt";
-lines = File.ReadAllLines(gearRatiosInputPath);
+lines = File.ReadAllLines(input.GetPath(day: 3));
 var gearRatios = new GearRatios(lines.ToList());
 var sumPartNumbers = gearRatios.PartNumbers().Sum();
 Console.WriteLine($"Day 3 - Gear Ratios - Sum of part numbers: {sumPartNumbers}");
@@ -42,8 +38,7 @@ Console.WriteLine($"Day 3 - Gear Ratios - Sum ofproduct of gears: {sumOfGearRati
 
 #region Day 4 - Scratchcards
 
-var scratchcardsInputPath = $"{inputFolder}/ScratchcardsInput.txt";
-var scratchcardGames = TextParser.ParseScratchcardsFromTextFile(scratchcardsInputPath);
+var scratchcardGames = TextParser.ParseScratchcardsFromTextFile(input.GetPath(day: 4));
 var scratchcards = new Scratchcards(scratchcardGames);
 Console.WriteLine($"Day 4 - Scratchcards - Total points: {scratchcards.TotalPoints()}");
 Console.WriteLine($"Day 4 - Scratchcards - Total cards: {scratchcards.CardsMultiplicity().Sum()}");
