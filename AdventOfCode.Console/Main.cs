@@ -53,3 +53,12 @@ Console.WriteLine($"Day 5 - Fertilizer - Lowest location number with individual 
 Console.WriteLine($"Day 5 - Fertilizer - Lowest location number with seeds as ranges: {fertilizer.LowestOutputWithSeedsAsRanges()}");
 
 #endregion
+
+#region Day 6 - Boat race
+
+var raceSpecs = TextParser.ParseBoatRace(input.GetPath(day: 6));
+int product = 1;
+foreach (var raceSpec in raceSpecs) product *= BoatRace.NumWaysToBreakRecord(raceSpec);
+Console.WriteLine($"Day 6 - Boat Race - Product of number of ways to beat records: {product}");
+
+#endregion

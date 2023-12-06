@@ -124,5 +124,20 @@ namespace AdventOfCode.Console.IO
             }
             return new SourceDestinationMapper(sourceName, destinationName, intervalOffsets);
         }
+
+        public static List<RaceSpecification> ParseBoatRace(string fileName)
+        {
+            List<int> times = new();
+            List<int> distances = new();
+            foreach (var line in File.ReadAllLines(fileName, Encoding.UTF8))
+            {
+                var lineParts = line.Split(":");
+                if (lineParts[0].Contains("Time"))
+                    times = SplitBySpace(lineParts[1]).Select(int.Parse).ToList();
+                else if (lineParts[0].Contains("Distance"))
+                    distances = SplitBySpace(lineParts[1]).Select(int.Parse).ToList();
+            }
+            return times.Zip(distances, (time, distance) => new RaceSpecification(RaceTime: time, PreviousRecord: distance)).ToList();
+        }
     }
 }

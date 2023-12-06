@@ -18,7 +18,8 @@ namespace AdventOfCode.Console.IO
                 "CubeConundrum",
                 "GearRatios",
                 "Scratchcards",
-                "Fertilizer"
+                "Fertilizer",
+                "BoatRace"
             };
             return Path.Combine(inputFolder, $"{inputFiles[day - 1]}Input.txt");
         }
