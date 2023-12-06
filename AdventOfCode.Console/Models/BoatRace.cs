@@ -1,9 +1,9 @@
 namespace AdventOfCode.Console.Models
 {
-    public record RaceSpecification(int RaceTime, int PreviousRecord);
+    public record RaceSpecification(long RaceTime, long PreviousRecord);
     public class BoatRace
     {
-        public static int NumWaysToBreakRecord(RaceSpecification raceSpecification)
+        public static long NumWaysToBreakRecord(RaceSpecification raceSpecification)
         {
             var raceTime = raceSpecification.RaceTime;
 
@@ -13,8 +13,8 @@ namespace AdventOfCode.Console.Models
             var lowerBound = (raceTime - sqrt) / 2;
             var upperBound = (raceTime + sqrt) / 2;
 
-            var intLowerBound = (int)Math.Floor(lowerBound) + 1;
-            var intUpperBound = (int)Math.Ceiling(upperBound) - 1;
+            var intLowerBound = (long)Math.Floor(lowerBound) + 1;
+            var intUpperBound = (long)Math.Ceiling(upperBound) - 1;
 
 
 

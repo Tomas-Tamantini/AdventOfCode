@@ -125,17 +125,18 @@ namespace AdventOfCode.Console.IO
             return new SourceDestinationMapper(sourceName, destinationName, intervalOffsets);
         }
 
-        public static List<RaceSpecification> ParseBoatRace(string fileName)
+        public static List<RaceSpecification> ParseBoatRace(string fileName, bool ignoreSpaces)
         {
-            List<int> times = new();
-            List<int> distances = new();
+            List<long> times = new();
+            List<long> distances = new();
             foreach (var line in File.ReadAllLines(fileName, Encoding.UTF8))
             {
                 var lineParts = line.Split(":");
+                string numbers = ignoreSpaces ? lineParts[1].Replace(" ", "") : lineParts[1];
                 if (lineParts[0].Contains("Time"))
-                    times = SplitBySpace(lineParts[1]).Select(int.Parse).ToList();
+                    times = SplitBySpace(numbers).Select(long.Parse).ToList();
                 else if (lineParts[0].Contains("Distance"))
-                    distances = SplitBySpace(lineParts[1]).Select(int.Parse).ToList();
+                    distances = SplitBySpace(numbers).Select(long.Parse).ToList();
             }
             return times.Zip(distances, (time, distance) => new RaceSpecification(RaceTime: time, PreviousRecord: distance)).ToList();
         }

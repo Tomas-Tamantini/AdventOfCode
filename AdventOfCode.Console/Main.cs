@@ -56,9 +56,12 @@ Console.WriteLine($"Day 5 - Fertilizer - Lowest location number with seeds as ra
 
 #region Day 6 - Boat race
 
-var raceSpecs = TextParser.ParseBoatRace(input.GetPath(day: 6));
-int product = 1;
-foreach (var raceSpec in raceSpecs) product *= BoatRace.NumWaysToBreakRecord(raceSpec);
-Console.WriteLine($"Day 6 - Boat Race - Product of number of ways to beat records: {product}");
+var raceSpecsWithSpaces = TextParser.ParseBoatRace(input.GetPath(day: 6), ignoreSpaces: false);
+long product = raceSpecsWithSpaces.Aggregate(1L, (currentProduct, raceSpec) => currentProduct * BoatRace.NumWaysToBreakRecord(raceSpec));
+Console.WriteLine($"Day 6 - Boat Race - Product of number of ways to beat records with spaces: {product}");
+
+var raceSpecsWithoutSpaces = TextParser.ParseBoatRace(input.GetPath(day: 6), ignoreSpaces: true);
+product = raceSpecsWithoutSpaces.Aggregate(1L, (currentProduct, raceSpec) => currentProduct * BoatRace.NumWaysToBreakRecord(raceSpec));
+Console.WriteLine($"Day 6 - Boat Race - Product of number of ways to beat records ignoring spaces: {product}");
 
 #endregion
