@@ -4,176 +4,209 @@ namespace AdventOfCode.Tests
 {
     public class TestDay5Fertilizer
     {
-        private static SourceDestinationMapper BuildSourceDestinationMapper(List<RangeMapper> rangeMappers, string sourceName = "A", string destinationName = "B")
+        #region Fertilizer tests
+
+        private Mock<IIntervalSet> outputIntervalMock;
+        private Mock<IIntervalMapper> intervalMapperMock;
+        private Fertilizer fertilizer;
+
+        private void SetupFertilizerMocks()
         {
-            return new SourceDestinationMapper(sourceName, destinationName, rangeMappers);
-        }
+            outputIntervalMock = new Mock<IIntervalSet>();
+            outputIntervalMock.Setup(x => x.LowestNumber()).Returns(123);
 
-        private static ChainMapper BuildChainMapper()
-        {
-            var rangeAB = new RangeMapper(sourceStart: 0, destinationStart: 100, rangeLength: 10);
-            var mapperAB = new SourceDestinationMapper(sourceName: "A", destinationName: "B", rangeMappers: new List<RangeMapper> { rangeAB });
+            intervalMapperMock = new Mock<IIntervalMapper>();
+            intervalMapperMock.Setup(x => x.Map(It.IsAny<IIntervalSet>())).Returns(outputIntervalMock.Object);
 
-            var rangeBC = new RangeMapper(sourceStart: 100, destinationStart: 1000, rangeLength: 10);
-            var mapperBC = new SourceDestinationMapper(sourceName: "B", destinationName: "C", rangeMappers: new List<RangeMapper> { rangeBC });
-
-            var rangeCD = new RangeMapper(sourceStart: 1000, destinationStart: 10000, rangeLength: 10);
-            var mapperCD = new SourceDestinationMapper(sourceName: "C", destinationName: "D", rangeMappers: new List<RangeMapper> { rangeCD });
-
-            return new ChainMapper(new List<SourceDestinationMapper> { mapperCD, mapperAB, mapperBC });
-        }
-
-        [Fact]
-        public void TestRangeMapperReturnsNullIfSourceIsOutsideRange()
-        {
-            var mapper = new RangeMapper(sourceStart: 100, destinationStart: 200, rangeLength: 50);
-            Assert.Null(mapper.Map(150));
-            Assert.Null(mapper.Map(99));
-            Assert.Null(mapper.Map(500000000000UL));
-        }
-
-        [Fact]
-        public void TestRangeMapperReturnsCorrespondingDestinationIfSourceIsWithinRange()
-        {
-            var mapper = new RangeMapper(sourceStart: 100, destinationStart: 200, rangeLength: 50);
-            Assert.Equal(200UL, mapper.Map(100));
-            Assert.Equal(249UL, mapper.Map(149));
-        }
-
-        [Fact]
-        public void TestRangeMapperMapsIntervalAndReturnsOutputIntervalAndLeftoverInputIntervals()
-        {
-            var mapper = new RangeMapper(sourceStart: 100, destinationStart: 200, rangeLength: 50);
-            var interval = new UlongInterval { Start = 50, End = 120 };
-            (UlongInterval? outputInterval, List<UlongInterval> leftoverInputIntervals) = mapper.MapInterval(interval);
-            Assert.Equal(new UlongInterval { Start = 200, End = 220 }, outputInterval);
-            Assert.Equal(new List<UlongInterval> { new() { Start = 50, End = 99 } }, leftoverInputIntervals);
+            fertilizer = new Fertilizer(new List<long> { 10, 3 }, intervalMapperMock.Object);
         }
 
 
         [Fact]
-        public void TestSourceDestinationMapperMapsNumberToItselfIfNotWithinAnyRange()
+        public void TestLowestOutputWithStandaloneSeedsReturnsSmallestNumberOfOutputSet()
         {
-            var rangeA = new RangeMapper(sourceStart: 100, destinationStart: 200, rangeLength: 50);
-            var rangeB = new RangeMapper(sourceStart: 200, destinationStart: 13, rangeLength: 14);
-            var ranges = new List<RangeMapper> { rangeA, rangeB };
-
-            var mapper = BuildSourceDestinationMapper(ranges);
-
-            Assert.Equal(150UL, mapper.Map(150));
-            Assert.Equal(99UL, mapper.Map(99));
-            Assert.Equal(500000000000UL, mapper.Map(500000000000UL));
+            SetupFertilizerMocks();
+            Assert.Equal(123, fertilizer.LowestOutputWithStandaloneSeeds());
         }
 
         [Fact]
-        public void TestSourceDestinationMapperMapsNumberWithinSomeRangeAccordingToThatRange()
+        public void TestStandaloneSeedsArePassedAsIndividualIntervalsToIntervalMapper()
         {
-            var rangeA = new RangeMapper(sourceStart: 100, destinationStart: 200, rangeLength: 50);
-            var rangeB = new RangeMapper(sourceStart: 200, destinationStart: 13, rangeLength: 14);
-            var ranges = new List<RangeMapper> { rangeA, rangeB };
-
-            var mapper = BuildSourceDestinationMapper(ranges);
-
-            Assert.Equal(200UL, mapper.Map(100));
-            Assert.Equal(249UL, mapper.Map(149));
-
-            Assert.Equal(13UL, mapper.Map(200));
-            Assert.Equal(26UL, mapper.Map(213));
+            SetupFertilizerMocks();
+            _ = fertilizer.LowestOutputWithStandaloneSeeds();
+            intervalMapperMock.Verify(x => x.Map(It.Is<IIntervalSet>(y => y.Contains(3) && y.Contains(10) && !y.Contains(7))));
         }
 
         [Fact]
-        public void TestSourceDestinationMapperMapsIntervalsToIntervals()
+        public void TestLowestOutputWithSeedsAsRangesReturnsSmallestNumberOfOutputSet()
         {
-            var rangeA = new RangeMapper(sourceStart: 100, destinationStart: 200, rangeLength: 50);
-            var rangeB = new RangeMapper(sourceStart: 200, destinationStart: 13, rangeLength: 14);
-            var ranges = new List<RangeMapper> { rangeA, rangeB };
-
-            var mapper = BuildSourceDestinationMapper(ranges);
-
-            var sourceIntervals = new List<UlongInterval>
-            {
-                new() { Start = 80, End = 130 },
-                new() { Start = 150, End = 160 },
-                new() { Start = 170, End = 220 },
-            };
-
-            var expectedDestinationIntervals = new List<UlongInterval>
-            {
-                new() { Start = 13, End = 20 },
-                new() { Start = 80, End = 99 },
-                new() { Start = 150, End = 160 },
-                new() { Start = 170, End = 230 },
-            };
-
-            var destinationIntervals = mapper.MapIntervals(sourceIntervals);
-            // Assert.Equal(expectedDestinationIntervals, destinationIntervals);
-            // TODO: Unskip method after optimizing code
+            SetupFertilizerMocks();
+            Assert.Equal(123, fertilizer.LowestOutputWithSeedsAsRanges());
         }
 
         [Fact]
-        public void TestChainMapperCanChainBetweenMultipleMaps()
+        public void TestSeedsAsRangesArePassedAsSingleIntervalToIntervalMapper()
         {
-            var chainMapper = BuildChainMapper();
-            Assert.Equal(10000UL, chainMapper.Map("A", "D", 0));
+            SetupFertilizerMocks();
+            _ = fertilizer.LowestOutputWithSeedsAsRanges();
+            intervalMapperMock.Verify(x => x.Map(It.Is<IIntervalSet>(y => y.Contains(10) && y.Contains(11) && y.Contains(12) && !y.Contains(13))));
+        }
+
+        #endregion
+
+        #region Interval tests
+
+        [Fact]
+        public void TestIntervalSetInformsWhetherItCointainsNumber()
+        {
+            var intervalSet = new IntervalSet(new List<Interval> { new() { Start = 1, End = 3 } });
+
+            Assert.True(intervalSet.Contains(1));
+            Assert.True(intervalSet.Contains(2));
+            Assert.True(intervalSet.Contains(3));
+            Assert.False(intervalSet.Contains(4));
         }
 
         [Fact]
-        public void TestChainMapperMapsNumberToItselfIfSourceAndDestinationAreTheSame()
+        public void TestIntervalSetInformsWhetherItContainsAllInAGroupOfNumbers()
         {
-            var chainMapper = BuildChainMapper();
-            Assert.Equal(10000UL, chainMapper.Map("Z", "Z", 10000UL));
-        }
+            var intervalSet = new IntervalSet(new List<Interval> { new() { Start = 1, End = 3 } });
 
-
-        [Fact]
-        public void TestChainMapperRaisesArgumentExceptionIfNoPathBetweenSourceAndDestination()
-        {
-            var chainMapper = BuildChainMapper();
-            Assert.Throws<ArgumentException>(() => chainMapper.Map("B", "A", 0));
-            Assert.Throws<ArgumentException>(() => chainMapper.Map("X", "Y", 0));
-            Assert.Throws<ArgumentException>(() => chainMapper.Map("C", "W", 0));
+            Assert.True(intervalSet.ContainsAll(1, 2, 3));
+            Assert.False(intervalSet.ContainsAll(1, 2, 3, 4));
         }
 
         [Fact]
-        public void TestFertilizerCanReturnLowestLocationNumberOfAllItsSeeds()
+        public void TestIntervalSetInformsWhetherItContainsAnyInAGroupOfNumbers()
         {
-            var mockMapper = new Mock<ChainMapper>();
-            mockMapper.Setup(m => m.Map(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ulong>())).Returns(
-                (string source, string destination, ulong value) =>
-                {
-                    return value switch
-                    {
-                        1 => 10,
-                        2 => 7,
-                        3 => 5000,
-                        _ => 500000000000UL,
-                    };
-                }
-            );
+            var intervalSet = new IntervalSet(new List<Interval> { new() { Start = 1, End = 3 } });
 
-            List<ulong> seeds = new() { 1, 2, 3 };
-            Fertilizer fertilizer = new(seeds, mockMapper.Object);
-            var lowestLocationNumber = fertilizer.LowestLocationNumber();
-            Assert.Equal(7UL, lowestLocationNumber);
-            mockMapper.Verify(m => m.Map("seed", "location", It.IsAny<ulong>()));
+            Assert.True(intervalSet.ContainsAny(1, 2, 3));
+            Assert.True(intervalSet.ContainsAny(1, 2, 3, 4));
+            Assert.False(intervalSet.ContainsAny(4, 5, 6));
         }
 
         [Fact]
-        public void TestFertilizerCanReturnLowestLocationNumberConsideringSeedsAsRanges()
+        public void TestSlicingAnAreaWhereSetIsEmptyReturnsEmptySet()
         {
-            var mockMapper = new Mock<ChainMapper>();
-            mockMapper.Setup(m => m.MapIntervals(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<UlongInterval>>())).Returns(
-                (string source, string destination, List<UlongInterval> value) =>
-                {
-                    return new List<UlongInterval> { new() { Start = 10, End = 20 }, new() { Start = 3, End = 7 } };
-                }
-            );
-
-            List<ulong> seeds = new() { 1, 5, 100, 10 };
-            Fertilizer fertilizer = new(seeds, mockMapper.Object);
-            var lowestLocationNumber = fertilizer.LowestLocationNumberWithSeedsAsRange();
-            Assert.Equal(3UL, lowestLocationNumber);
-            mockMapper.Verify(m => m.MapIntervals("seed", "location", It.IsAny<List<UlongInterval>>()));
+            var intervalSet = new IntervalSet(new List<Interval> { new() { Start = 1, End = 3 } });
+            var slicedSet = intervalSet.Slice(4, 5);
+            Assert.True(slicedSet.IsEmpty());
         }
+
+        [Fact]
+        public void TestIntervalSetInformsItsLowestNumber()
+        {
+            var intervalSet = new IntervalSet(new List<Interval> { new() { Start = 1, End = 3 }, new() { Start = 10, End = 14 } });
+            Assert.Equal(1, intervalSet.LowestNumber());
+        }
+
+        [Fact]
+        public void TestSlicingAnAreaWhereSetIsNotEmptyReturnsSetWithSlicedIntervals()
+        {
+            var intervalSet = new IntervalSet(new List<Interval> { new() { Start = 1, End = 3 }, new() { Start = 10, End = 14 } });
+            var slicedSet = intervalSet.Slice(2, 5);
+            Assert.True(slicedSet.ContainsAll(2, 3));
+            Assert.False(slicedSet.ContainsAny(1, 4));
+        }
+
+        [Fact]
+        public void TestCanPassOnlySliceStart()
+        {
+            var intervalSet = new IntervalSet(new List<Interval> { new() { Start = 1, End = 3 }, new() { Start = 10, End = 14 } });
+            var slicedSet = intervalSet.Slice(start: 3);
+            Assert.True(slicedSet.ContainsAll(3));
+            Assert.False(slicedSet.ContainsAny(1, 2, 4));
+        }
+
+        [Fact]
+        public void TestCanPassOnlySliceEnd()
+        {
+            var intervalSet = new IntervalSet(new List<Interval> { new() { Start = 1, End = 3 }, new() { Start = 10, End = 14 } });
+            var slicedSet = intervalSet.Slice(end: 3);
+            Assert.True(slicedSet.ContainsAll(1, 2, 3));
+            Assert.False(slicedSet.ContainsAny(0, 4));
+        }
+
+        [Fact]
+        public void TestMergingTwoSetsProducesSetWithIntervalsFromBothSets()
+        {
+            var intervalSet1 = new IntervalSet(new List<Interval> { new() { Start = 1, End = 3 } });
+            var intervalSet2 = new IntervalSet(new List<Interval> { new() { Start = 3, End = 5 }, new() { Start = 10, End = 14 } });
+            var mergedSet = intervalSet1.Merge(intervalSet2);
+            Assert.True(mergedSet.ContainsAll(1, 2, 3, 4, 5, 10, 11, 12, 13, 14));
+        }
+
+        [Fact]
+        public void TestCanOffsetSet()
+        {
+            var intervalSet = new IntervalSet(new List<Interval> { new() { Start = 1, End = 3 }, new() { Start = 10, End = 14 } });
+            var offsetSet = intervalSet.Offset(100);
+            Assert.True(offsetSet.ContainsAll(101, 102, 103, 110, 111, 112, 113, 114));
+        }
+
+        # endregion
+
+        #region ChainMapper tests
+
+        [Fact]
+        public void TestChainMapperMapsAppliesConsecutiveMappings()
+        {
+            var intervalSetMockIn = new Mock<IIntervalSet>();
+            var intervalSetMockOut1 = new Mock<IIntervalSet>();
+            var intervalSetMockOut2 = new Mock<IIntervalSet>();
+
+            var mapperMock1 = new Mock<IIntervalMapper>();
+            var mapperMock2 = new Mock<IIntervalMapper>();
+
+            mapperMock1.Setup(x => x.Map(It.IsAny<IIntervalSet>())).Returns(intervalSetMockOut1.Object);
+            mapperMock2.Setup(x => x.Map(It.IsAny<IIntervalSet>())).Returns(intervalSetMockOut2.Object);
+
+            var chainMapper = new ChainMapper(new List<IIntervalMapper> { mapperMock1.Object, mapperMock2.Object });
+            var result = chainMapper.Map(intervalSetMockIn.Object);
+
+            mapperMock1.Verify(x => x.Map(intervalSetMockIn.Object));
+            mapperMock2.Verify(x => x.Map(intervalSetMockOut1.Object));
+            Assert.Equal(intervalSetMockOut2.Object, result);
+        }
+
+        #endregion
+
+        #region SourceDestination tests
+
+        [Fact]
+        public void TestSourceDestinationMapperMapsEmptyIntervalSetToEmpty()
+        {
+            var emptyIntervalSet = new IntervalSet(new List<Interval>());
+            var intervalOffset = new IntervalOffset(new Interval { Start = 1, End = 3 }, 2);
+            var intervalOffsets = new List<IntervalOffset> { intervalOffset };
+            var sourceDestinationMapper = new SourceDestinationMapper("A", "B", intervalOffsets);
+            var outputInterval = sourceDestinationMapper.Map(emptyIntervalSet);
+            Assert.True(outputInterval.IsEmpty());
+        }
+
+        [Fact]
+        public void TestSourceDestinationMapperMapsIntervalSetToItselfIfOffsetsDoNotIntersectInputSet()
+        {
+            IntervalSet inputSet = new(new List<Interval>() { new() { Start = 1, End = 3 } });
+            var intervalOffsets = new List<IntervalOffset> { new(new Interval { Start = 4, End = 5 }, 2) };
+            var sourceDestinationMapper = new SourceDestinationMapper("A", "B", intervalOffsets);
+            var outputSet = sourceDestinationMapper.Map(inputSet);
+            Assert.True(outputSet.ContainsAll(1, 2, 3));
+        }
+
+        [Fact]
+        public void TestSourceDestinationMapperSlicesAndOffsetsInputSetToProduceOutput()
+        {
+            IntervalSet inputSet = new(new List<Interval>() { new() { Start = 1, End = 3 }, new() { Start = 10, End = 14 } });
+            IntervalOffset offset1 = new(new Interval { Start = 2, End = 11 }, 100);
+            IntervalOffset offset2 = new(new Interval { Start = 14, End = 20 }, 1000);
+            var sourceDestinationMapper = new SourceDestinationMapper("A", "B", new List<IntervalOffset> { offset1, offset2 });
+            var outputSet = sourceDestinationMapper.Map(inputSet);
+            Assert.True(outputSet.ContainsAll(1, 12, 13, 102, 103, 110, 111, 1014));
+            Assert.False(outputSet.ContainsAny(2, 3, 10, 11, 14));
+        }
+
+        #endregion
     }
 }

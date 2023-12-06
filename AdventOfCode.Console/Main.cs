@@ -49,7 +49,7 @@ Console.WriteLine($"Day 4 - Scratchcards - Total cards: {scratchcards.CardsMulti
 
 var fileText = File.ReadAllText(input.GetPath(day: 5));
 var fertilizer = TextParser.ParseFertilizer(fileText);
-Console.WriteLine($"Day 5 - Fertilizer - Lowest location number with individual seeds: {fertilizer.LowestLocationNumber()}");
-Console.WriteLine($"Day 5 - Fertilizer - Lowest location number with seeds as ranges: {fertilizer.LowestLocationNumberWithSeedsAsRange()}");
+Console.WriteLine($"Day 5 - Fertilizer - Lowest location number with individual seeds: {fertilizer.LowestOutputWithStandaloneSeeds()}");
+Console.WriteLine($"Day 5 - Fertilizer - Lowest location number with seeds as ranges: {fertilizer.LowestOutputWithSeedsAsRanges()}");
 
 #endregion

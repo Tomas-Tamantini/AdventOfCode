@@ -72,7 +72,7 @@ namespace AdventOfCode.Console.IO
         public static Fertilizer ParseFertilizer(string fertilizerText)
         {
             string[] lines = fertilizerText.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            List<ulong> seeds = new();
+            List<long> seeds = new();
             List<SourceDestinationMapper> mappers = new();
             List<string> lineAccumulator = new();
             foreach (var line in lines)
@@ -87,21 +87,21 @@ namespace AdventOfCode.Console.IO
                 else lineAccumulator.Add(line);
             }
             if (lineAccumulator.Count > 0) mappers.Add(ParseSourceDestinationMapper(lineAccumulator));
-            return new Fertilizer(seeds, new ChainMapper(mappers));
+            return new Fertilizer(seeds, new ChainMapper("seed", "location", mappers));
         }
 
-        public static List<ulong> ParseFertilizerSeeds(string line)
+        public static List<long> ParseFertilizerSeeds(string line)
         {
             var seedsText = line.Split(":")[1];
             var seedsAsStr = SplitBySpace(seedsText);
-            return seedsAsStr.Select(ulong.Parse).ToList();
+            return seedsAsStr.Select(long.Parse).ToList();
         }
 
         public static SourceDestinationMapper ParseSourceDestinationMapper(List<string> lines)
         {
             var sourceName = "";
             var destinationName = "";
-            var rangeMappers = new List<RangeMapper>();
+            var intervalOffsets = new List<IntervalOffset>();
             foreach (var line in lines)
             {
                 if (line.Contains("map"))
@@ -114,13 +114,15 @@ namespace AdventOfCode.Console.IO
                     var rangeDef = SplitBySpace(line);
                     if (rangeDef.Length == 3)
                     {
-                        var range = rangeDef.Select(r => ulong.Parse(r)).ToList();
-                        RangeMapper rangeMapper = new(sourceStart: range[1], destinationStart: range[0], rangeLength: range[2]);
-                        rangeMappers.Add(rangeMapper);
+                        var range = rangeDef.Select(r => long.Parse(r)).ToList();
+                        Interval interval = new() { Start = range[1], End = range[1] + range[2] - 1 };
+                        var offset = range[0] - range[1];
+                        IntervalOffset intervalOffset = new(interval, offset);
+                        intervalOffsets.Add(intervalOffset);
                     }
                 }
             }
-            return new SourceDestinationMapper(sourceName, destinationName, rangeMappers);
+            return new SourceDestinationMapper(sourceName, destinationName, intervalOffsets);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace AdventOfCode.Tests
         public void TestCanParseTextIntoFertilizerSeeds()
         {
             var seedsText = "seeds: 79 14 55 13";
-            Assert.Equal(new List<ulong>() { 79, 14, 55, 13 }, TextParser.ParseFertilizerSeeds(seedsText));
+            Assert.Equal(new List<long>() { 79, 14, 55, 13 }, TextParser.ParseFertilizerSeeds(seedsText));
         }
 
         [Fact]
@@ -39,7 +39,8 @@ namespace AdventOfCode.Tests
             SourceDestinationMapper parsedMap = TextParser.ParseSourceDestinationMapper(mapText);
             Assert.Equal("seed", parsedMap.SourceName);
             Assert.Equal("soil", parsedMap.DestinationName);
-            Assert.Equal(55UL, parsedMap.Map(53));
+            IntervalSet intervalSet = new(new List<Interval> { new() { Start = 53, End = 53 } });
+            Assert.Equal(55, parsedMap.Map(intervalSet).LowestNumber());
         }
 
         [Fact]
@@ -80,7 +81,7 @@ namespace AdventOfCode.Tests
                                 "56 93 4\n";
 
             Fertilizer fertilizer = TextParser.ParseFertilizer(fertilizerText);
-            Assert.Equal(35UL, fertilizer.LowestLocationNumber());
+            Assert.Equal(35, fertilizer.LowestOutputWithStandaloneSeeds());
         }
     }
 }
