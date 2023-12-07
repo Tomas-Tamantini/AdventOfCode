@@ -83,5 +83,14 @@ namespace AdventOfCode.Tests
             Fertilizer fertilizer = TextParser.ParseFertilizer(fertilizerText);
             Assert.Equal(35, fertilizer.LowestOutputWithStandaloneSeeds());
         }
+
+        [Fact]
+        public void TestCanParseCamelBid()
+        {
+            var bidText = "A23A4 1";
+            var bid = TextParser.ParseCamelBid(bidText);
+            Assert.Equal(new CamelHand("A23A4"), bid.Hand);
+            Assert.Equal(1, bid.Bid);
+        }
     }
 }

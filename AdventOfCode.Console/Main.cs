@@ -65,3 +65,11 @@ product = raceSpecsWithoutSpaces.Aggregate(1L, (currentProduct, raceSpec) => cur
 Console.WriteLine($"Day 6 - Boat Race - Product of number of ways to beat records ignoring spaces: {product}");
 
 #endregion
+
+#region  Day 7 - Camel Cards
+
+var camelBids = TextParser.ParseCamelBids(input.GetPath(day: 7));
+var camelCards = new CamelCards(camelBids);
+Console.WriteLine($"Day 7 - Camel Cards - Total winnings: {camelCards.TotalWinnings()}");
+
+#endregion

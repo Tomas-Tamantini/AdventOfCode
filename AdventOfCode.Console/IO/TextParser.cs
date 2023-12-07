@@ -3,7 +3,7 @@ using System.Text;
 
 namespace AdventOfCode.Console.IO
 {
-    public class TextParser
+    public static class TextParser
     {
         public static List<CubeGame> ParseCubeGamesFromTextFile(string fileName)
         {
@@ -139,6 +139,20 @@ namespace AdventOfCode.Console.IO
                     distances = SplitBySpace(numbers).Select(long.Parse).ToList();
             }
             return times.Zip(distances, (time, distance) => new RaceSpecification(RaceTime: time, PreviousRecord: distance)).ToList();
+        }
+
+        public static List<CamelBid> ParseCamelBids(string fileName)
+        {
+            var lines = File.ReadAllLines(fileName, Encoding.UTF8);
+            return lines.Select(line => ParseCamelBid(line)).ToList();
+        }
+
+        public static CamelBid ParseCamelBid(string line)
+        {
+            var bidParts = line.Split(" ");
+            var hand = new CamelHand(bidParts[0]);
+            var bid = int.Parse(bidParts[1]);
+            return new CamelBid(hand, bid);
         }
     }
 }
