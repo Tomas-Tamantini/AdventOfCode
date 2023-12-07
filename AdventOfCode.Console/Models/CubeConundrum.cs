@@ -5,7 +5,7 @@ namespace AdventOfCode.Console.Models
         public int Power => Red * Green * Blue;
     };
     public record CubeGame(int Id, List<CubeCollection> Handfuls);
-    public class CubeConundrum
+    public static class CubeConundrum
     {
         public static bool GameIsPossible(CubeCollection bag, CubeGame game)
         {
@@ -17,11 +17,8 @@ namespace AdventOfCode.Console.Models
 
         public static int SumOfIdsOfAllPossibleGames(CubeCollection bag, List<CubeGame> games)
         {
-            var sum = 0;
-            foreach (var game in games)
-                if (GameIsPossible(bag, game))
-                    sum += game.Id;
-            return sum;
+            return games.Where(game => GameIsPossible(bag, game))
+                        .Sum(game => game.Id);
         }
 
         public static CubeCollection MinimumBag(CubeGame game)

@@ -2,7 +2,7 @@
 
 namespace AdventOfCode.Console.Models
 {
-    public class Trebuchet
+    public static class Trebuchet
     {
         static public int ExtractNumericValue(string line, bool considerSpelledOutDigits = false)
         {

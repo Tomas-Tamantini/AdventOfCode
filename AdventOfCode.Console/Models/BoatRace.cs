@@ -1,7 +1,7 @@
 namespace AdventOfCode.Console.Models
 {
     public record RaceSpecification(long RaceTime, long PreviousRecord);
-    public class BoatRace
+    public static class BoatRace
     {
         public static long NumWaysToBreakRecord(RaceSpecification raceSpecification)
         {
