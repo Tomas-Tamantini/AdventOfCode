@@ -150,7 +150,7 @@ namespace AdventOfCode.Console.IO
         public static CamelBid ParseCamelBid(string line)
         {
             var bidParts = line.Split(" ");
-            var hand = new CamelHand(bidParts[0]);
+            var hand = bidParts[0];
             var bid = int.Parse(bidParts[1]);
             return new CamelBid(hand, bid);
         }

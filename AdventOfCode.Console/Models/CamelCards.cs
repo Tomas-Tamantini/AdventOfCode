@@ -11,16 +11,19 @@ namespace AdventOfCode.Console.Models
         FiveOfAKind = 6
     }
 
-    public class CamelHand : IComparable<CamelHand>
+    public interface IHandRanker
     {
-        public HandType HandType { get; private set; }
-        private readonly int[] cardValues;
+        HandType RankHand(string hand);
+        int[] CardValues(string hand);
+    }
 
-        public CamelHand(string hand)
+    public class DefaultCamelRanker : IHandRanker
+    {
+        public HandType RankHand(string hand)
         {
             Dictionary<char, int> cardMultiplicity = hand.GroupBy(c => c).ToDictionary(g => g.Key, g => g.Count());
             var highestCount = cardMultiplicity.Values.Max();
-            HandType = highestCount switch
+            return highestCount switch
             {
                 2 => cardMultiplicity.Count == 3 ? HandType.TwoPair : HandType.OnePair,
                 3 => cardMultiplicity.Count == 2 ? HandType.FullHouse : HandType.ThreeOfAKind,
@@ -28,8 +31,11 @@ namespace AdventOfCode.Console.Models
                 5 => HandType.FiveOfAKind,
                 _ => HandType.HighCard,
             };
+        }
 
-            cardValues = hand.Select(c => c switch
+        public int[] CardValues(string hand)
+        {
+            return hand.Select(c => c switch
             {
                 'T' => 10,
                 'J' => 11,
@@ -38,6 +44,18 @@ namespace AdventOfCode.Console.Models
                 'A' => 14,
                 _ => int.Parse(c.ToString())
             }).ToArray();
+        }
+    }
+
+    public class CamelHand : IComparable<CamelHand>
+    {
+        public HandType HandType { get; private set; }
+        private readonly int[] cardValues;
+
+        public CamelHand(string hand, IHandRanker ranker)
+        {
+            HandType = ranker.RankHand(hand);
+            cardValues = ranker.CardValues(hand);
         }
 
         public int CompareTo(CamelHand other)
@@ -60,15 +78,15 @@ namespace AdventOfCode.Console.Models
         }
     }
 
-    public record CamelBid(CamelHand Hand, int Bid);
+    public record CamelBid(string Hand, int Bid, CamelHand? ParsedHand = null);
 
     public class CamelCards
     {
         private readonly List<CamelBid> bids;
 
-        public CamelCards(List<CamelBid> bids)
+        public CamelCards(List<CamelBid> bids, IHandRanker ranker)
         {
-            this.bids = bids;
+            this.bids = bids.Select(b => new CamelBid(b.Hand, b.Bid, new CamelHand(b.Hand, ranker))).ToList();
         }
 
         public int[] SortedBidValues()

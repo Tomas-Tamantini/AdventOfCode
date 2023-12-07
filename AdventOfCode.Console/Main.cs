@@ -69,7 +69,7 @@ Console.WriteLine($"Day 6 - Boat Race - Product of number of ways to beat record
 #region  Day 7 - Camel Cards
 
 var camelBids = TextParser.ParseCamelBids(input.GetPath(day: 7));
-var camelCards = new CamelCards(camelBids);
-Console.WriteLine($"Day 7 - Camel Cards - Total winnings: {camelCards.TotalWinnings()}");
+var defaultGame = new CamelCards(camelBids, new DefaultCamelRanker());
+Console.WriteLine($"Day 7 - Camel Cards - Total winnings: {defaultGame.TotalWinnings()}");
 
 #endregion

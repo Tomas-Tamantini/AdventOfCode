@@ -13,84 +13,52 @@ namespace AdventOfCode.Tests
             Assert.True(HandType.FourOfAKind < HandType.FiveOfAKind);
         }
 
-        [Fact]
-        public void TestHighCardhandsAreProperlyClassified()
-        {
-            var hand = new CamelHand("23456");
-            Assert.Equal(HandType.HighCard, hand.HandType);
-        }
+        private readonly IHandRanker defaultRanker = new DefaultCamelRanker();
 
         [Fact]
-        public void TestOnePairhandsAreProperlyClassified()
+        public void TestHandsAreProperlyClassifiedByDefaultRanker()
         {
-            var hand = new CamelHand("A23A4");
-            Assert.Equal(HandType.OnePair, hand.HandType);
-        }
-
-        [Fact]
-        public void TestTwoPairhandsAreProperlyClassified()
-        {
-            var hand = new CamelHand("23432");
-            Assert.Equal(HandType.TwoPair, hand.HandType);
-        }
-
-        [Fact]
-        public void TestThreeOfAKindhandsAreProperlyClassified()
-        {
-            var hand = new CamelHand("TTT98");
-            Assert.Equal(HandType.ThreeOfAKind, hand.HandType);
-        }
-
-        [Fact]
-        public void TestFullHousehandsAreProperlyClassified()
-        {
-            var hand = new CamelHand("23332");
-            Assert.Equal(HandType.FullHouse, hand.HandType);
-        }
-
-        [Fact]
-        public void TestFourOfAKindhandsAreProperlyClassified()
-        {
-            var hand = new CamelHand("AA8AA");
-            Assert.Equal(HandType.FourOfAKind, hand.HandType);
-        }
-
-        [Fact]
-        public void TestFiveOfAKindhandsAreProperlyClassified()
-        {
-            var hand = new CamelHand("AAAAA");
-            Assert.Equal(HandType.FiveOfAKind, hand.HandType);
+            Assert.Equal(HandType.HighCard, defaultRanker.RankHand("23456"));
+            Assert.Equal(HandType.OnePair, defaultRanker.RankHand("A23A4"));
+            Assert.Equal(HandType.TwoPair, defaultRanker.RankHand("23432"));
+            Assert.Equal(HandType.ThreeOfAKind, defaultRanker.RankHand("TTT98"));
+            Assert.Equal(HandType.FullHouse, defaultRanker.RankHand("23332"));
+            Assert.Equal(HandType.FourOfAKind, defaultRanker.RankHand("AA8AA"));
+            Assert.Equal(HandType.FiveOfAKind, defaultRanker.RankHand("AAAAA"));
         }
 
         [Fact]
         public void TestHandOfHigherTypeBeatsHandOfLowerType()
         {
-            var bestHand = new CamelHand("KKKJJ");
-            var worstHand = new CamelHand("AATT2");
+            var bestHand = new CamelHand("KKKJJ", defaultRanker);
+            var worstHand = new CamelHand("AATT2", defaultRanker);
             Assert.True(worstHand < bestHand);
         }
 
         [Fact]
         public void TestHandsOfEqualTypesAreComparedCardByCardFromFirstToLast()
         {
-            var bestHand = new CamelHand("33332");
-            var worstHand = new CamelHand("2AAAA");
+            var bestHand = new CamelHand("33332", defaultRanker);
+            var worstHand = new CamelHand("2AAAA", defaultRanker);
             Assert.True(worstHand < bestHand);
         }
 
-        private readonly List<CamelBid> testBids = new()
+        private static List<CamelBid> GetTestBids()
         {
-            new CamelBid(new CamelHand("32T3K"), 765),
-            new CamelBid(new CamelHand("T55J5"), 684),
-            new CamelBid(new CamelHand("KK677"), 28),
-            new CamelBid(new CamelHand("KTJJT"), 220),
-            new CamelBid(new CamelHand("QQQJA"), 483),
-        };
+            return new()
+            {
+                new CamelBid("32T3K", 765),
+                new CamelBid("T55J5", 684),
+                new CamelBid("KK677", 28),
+                new CamelBid("KTJJT", 220),
+                new CamelBid("QQQJA", 483)
+            };
+        }
 
         [Fact]
         public void TestBidsCanBeSortedByHandValue()
         {
-            CamelCards camelCards = new(testBids);
+            CamelCards camelCards = new(GetTestBids(), defaultRanker);
             int[] expectedSortedBids = { 765, 220, 28, 684, 483 };
             Assert.Equal(expectedSortedBids, camelCards.SortedBidValues());
         }
@@ -98,7 +66,7 @@ namespace AdventOfCode.Tests
         [Fact]
         public void TestTotalWinningsAreSumOfBidsTimeTheirRanks()
         {
-            CamelCards camelCards = new(testBids);
+            CamelCards camelCards = new(GetTestBids(), defaultRanker);
             Assert.Equal(6440, camelCards.TotalWinnings());
         }
     }
