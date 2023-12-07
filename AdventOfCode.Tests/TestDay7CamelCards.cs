@@ -14,6 +14,7 @@ namespace AdventOfCode.Tests
         }
 
         private readonly IHandRanker defaultRanker = new DefaultCamelRanker();
+        private readonly IHandRanker jokerRanker = new JokerCamelRanker();
 
         [Fact]
         public void TestHandsAreProperlyClassifiedByDefaultRanker()
@@ -28,18 +29,30 @@ namespace AdventOfCode.Tests
         }
 
         [Fact]
+        public void TestHandsAreProperlyClassifiedByJokerRanker()
+        {
+            Assert.Equal(HandType.HighCard, jokerRanker.RankHand("23456"));
+            Assert.Equal(HandType.OnePair, jokerRanker.RankHand("23J56"));
+            Assert.Equal(HandType.TwoPair, jokerRanker.RankHand("KKQQ6"));
+            Assert.Equal(HandType.ThreeOfAKind, jokerRanker.RankHand("7J9TJ"));
+            Assert.Equal(HandType.FullHouse, jokerRanker.RankHand("7788J"));
+            Assert.Equal(HandType.FourOfAKind, jokerRanker.RankHand("QJJQ2"));
+            Assert.Equal(HandType.FiveOfAKind, jokerRanker.RankHand("AAAJJ"));
+        }
+
+        [Fact]
         public void TestHandOfHigherTypeBeatsHandOfLowerType()
         {
-            var bestHand = new CamelHand("KKKJJ", defaultRanker);
-            var worstHand = new CamelHand("AATT2", defaultRanker);
+            var bestHand = new CamelHand { HandType = HandType.FourOfAKind, CardValues = new int[] { 1, 2, 3 } };
+            var worstHand = new CamelHand { HandType = HandType.ThreeOfAKind, CardValues = new int[] { 1, 2, 3 } };
             Assert.True(worstHand < bestHand);
         }
 
         [Fact]
         public void TestHandsOfEqualTypesAreComparedCardByCardFromFirstToLast()
         {
-            var bestHand = new CamelHand("33332", defaultRanker);
-            var worstHand = new CamelHand("2AAAA", defaultRanker);
+            var bestHand = new CamelHand { HandType = HandType.FourOfAKind, CardValues = new int[] { 1, 2, 4 } };
+            var worstHand = new CamelHand { HandType = HandType.ThreeOfAKind, CardValues = new int[] { 1, 2, 3 } };
             Assert.True(worstHand < bestHand);
         }
 
@@ -61,6 +74,10 @@ namespace AdventOfCode.Tests
             CamelCards camelCards = new(GetTestBids(), defaultRanker);
             int[] expectedSortedBids = { 765, 220, 28, 684, 483 };
             Assert.Equal(expectedSortedBids, camelCards.SortedBidValues());
+
+            camelCards = new(GetTestBids(), jokerRanker);
+            expectedSortedBids = new[] { 765, 28, 684, 483, 220 };
+            Assert.Equal(expectedSortedBids, camelCards.SortedBidValues());
         }
 
         [Fact]
@@ -68,6 +85,9 @@ namespace AdventOfCode.Tests
         {
             CamelCards camelCards = new(GetTestBids(), defaultRanker);
             Assert.Equal(6440, camelCards.TotalWinnings());
+
+            camelCards = new(GetTestBids(), jokerRanker);
+            Assert.Equal(5905, camelCards.TotalWinnings());
         }
     }
 }

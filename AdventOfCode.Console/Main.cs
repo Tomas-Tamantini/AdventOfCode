@@ -72,4 +72,7 @@ var camelBids = TextParser.ParseCamelBids(input.GetPath(day: 7));
 var defaultGame = new CamelCards(camelBids, new DefaultCamelRanker());
 Console.WriteLine($"Day 7 - Camel Cards - Total winnings: {defaultGame.TotalWinnings()}");
 
+var jokerGame = new CamelCards(camelBids, new JokerCamelRanker());
+Console.WriteLine($"Day 7 - Camel Cards - Total winnings with jokers: {jokerGame.TotalWinnings()}");
+
 #endregion
