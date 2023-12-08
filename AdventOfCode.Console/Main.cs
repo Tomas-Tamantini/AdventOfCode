@@ -80,8 +80,8 @@ Console.WriteLine($"Day 7 - Camel Cards - Total winnings with jokers: {jokerGame
 #region Day 8 - Haunted Wasteland
 
 
-(HauntedWasteland wasteland, string path) = TextParser.ParseHauntedWasteLandAndPath(input.GetPath(day: 8));
-int numSteps = wasteland.NumSteps("AAA", "ZZZ", path);
+var wasteland = TextParser.ParseHauntedWasteLandAndPath(input.GetPath(day: 8));
+int numSteps = wasteland.NumSteps("AAA", "ZZZ");
 Console.WriteLine($"Day 8 - Haunted Wasteland - Number of steps: {numSteps}");
 
 #endregion

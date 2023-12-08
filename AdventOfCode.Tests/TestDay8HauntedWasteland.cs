@@ -16,8 +16,8 @@ namespace AdventOfCode.Tests
                 { "GGG", ("GGG", "GGG") },
                 { "ZZZ", ("ZZZ", "ZZZ") },
             };
-            HauntedWasteland pathFinder = new(network);
-            Assert.Equal(2, pathFinder.NumSteps(origin: "AAA", destination: "ZZZ", path: path));
+            HauntedWasteland pathFinder = new() { Network = network, Path = path };
+            Assert.Equal(2, pathFinder.NumSteps(origin: "AAA", destination: "ZZZ"));
         }
 
         [Fact]
@@ -30,8 +30,8 @@ namespace AdventOfCode.Tests
                 { "BBB", ("AAA", "ZZZ") },
                 { "ZZZ", ("ZZZ", "ZZZ") },
             };
-            HauntedWasteland pathFinder = new(network);
-            Assert.Equal(6, pathFinder.NumSteps(origin: "AAA", destination: "ZZZ", path: path));
+            HauntedWasteland pathFinder = new() { Network = network, Path = path };
+            Assert.Equal(6, pathFinder.NumSteps(origin: "AAA", destination: "ZZZ"));
 
         }
     }

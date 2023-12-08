@@ -155,7 +155,7 @@ namespace AdventOfCode.Console.IO
             return new CamelBid(hand, bid);
         }
 
-        public static (HauntedWasteland, string) ParseHauntedWasteLandAndPath(string fileName)
+        public static HauntedWasteland ParseHauntedWasteLandAndPath(string fileName)
         {
             var lines = File.ReadAllLines(fileName, Encoding.UTF8);
             string path = "";
@@ -174,7 +174,7 @@ namespace AdventOfCode.Console.IO
                     network.Add(dictKey, (leftNode, rightNode));
                 }
             }
-            return (new HauntedWasteland(network), path);
+            return new HauntedWasteland() { Network = network, Path = path };
         }
     }
 }
