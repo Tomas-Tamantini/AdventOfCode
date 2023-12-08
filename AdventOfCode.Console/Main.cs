@@ -66,7 +66,7 @@ Console.WriteLine($"Day 6 - Boat Race - Product of number of ways to beat record
 
 #endregion
 
-#region  Day 7 - Camel Cards
+#region Day 7 - Camel Cards
 
 var camelBids = TextParser.ParseCamelBids(input.GetPath(day: 7));
 var defaultGame = new CamelCards(camelBids, new DefaultCamelRanker());
@@ -74,5 +74,14 @@ Console.WriteLine($"Day 7 - Camel Cards - Total winnings: {defaultGame.TotalWinn
 
 var jokerGame = new CamelCards(camelBids, new JokerCamelRanker());
 Console.WriteLine($"Day 7 - Camel Cards - Total winnings with jokers: {jokerGame.TotalWinnings()}");
+
+#endregion
+
+#region Day 8 - Haunted Wasteland
+
+
+(HauntedWasteland wasteland, string path) = TextParser.ParseHauntedWasteLandAndPath(input.GetPath(day: 8));
+int numSteps = wasteland.NumSteps("AAA", "ZZZ", path);
+Console.WriteLine($"Day 8 - Haunted Wasteland - Number of steps: {numSteps}");
 
 #endregion

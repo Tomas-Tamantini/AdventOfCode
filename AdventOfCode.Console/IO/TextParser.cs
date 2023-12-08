@@ -154,5 +154,27 @@ namespace AdventOfCode.Console.IO
             var bid = int.Parse(bidParts[1]);
             return new CamelBid(hand, bid);
         }
+
+        public static (HauntedWasteland, string) ParseHauntedWasteLandAndPath(string fileName)
+        {
+            var lines = File.ReadAllLines(fileName, Encoding.UTF8);
+            string path = "";
+            Dictionary<string, (string, string)> network = new();
+            foreach (string line in lines)
+            {
+                if (line.Length == 0) continue;
+                if (!line.Contains('=')) path = line;
+                else
+                {
+                    var dictParts = line.Replace("(", "").Replace(")", "").Split("=");
+                    var dictKey = dictParts[0].Trim();
+                    var dictValues = dictParts[1].Split(",");
+                    string leftNode = dictValues[0].Trim();
+                    string rightNode = dictValues[1].Trim();
+                    network.Add(dictKey, (leftNode, rightNode));
+                }
+            }
+            return (new HauntedWasteland(network), path);
+        }
     }
 }

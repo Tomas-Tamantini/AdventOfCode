@@ -21,6 +21,7 @@ namespace AdventOfCode.Console.IO
                 "Fertilizer",
                 "BoatRace",
                 "CamelCards",
+                "HauntedWasteland"
             };
             return Path.Combine(inputFolder, $"{inputFiles[day - 1]}Input.txt");
         }
