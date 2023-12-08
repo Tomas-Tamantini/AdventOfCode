@@ -79,9 +79,10 @@ Console.WriteLine($"Day 7 - Camel Cards - Total winnings with jokers: {jokerGame
 
 #region Day 8 - Haunted Wasteland
 
-
 var wasteland = TextParser.ParseHauntedWasteLandAndPath(input.GetPath(day: 8));
-int numSteps = wasteland.NumSteps("AAA", "ZZZ");
-Console.WriteLine($"Day 8 - Haunted Wasteland - Number of steps: {numSteps}");
+int numStepsSinglePath = wasteland.NumStepsSinglePath("AAA", "ZZZ");
+Console.WriteLine($"Day 8 - Haunted Wasteland - Number of steps with single path: {numStepsSinglePath}");
+long numStepsSimultaneousPaths = wasteland.NumStepsSimultaneousPaths('A', 'Z');
+Console.WriteLine($"Day 8 - Haunted Wasteland - Number of steps with simultaneous paths: {numStepsSimultaneousPaths}");
 
 #endregion

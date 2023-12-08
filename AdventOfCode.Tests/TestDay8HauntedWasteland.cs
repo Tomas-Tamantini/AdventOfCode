@@ -17,7 +17,7 @@ namespace AdventOfCode.Tests
                 { "ZZZ", ("ZZZ", "ZZZ") },
             };
             HauntedWasteland pathFinder = new() { Network = network, Path = path };
-            Assert.Equal(2, pathFinder.NumSteps(origin: "AAA", destination: "ZZZ"));
+            Assert.Equal(2, pathFinder.NumStepsSinglePath(origin: "AAA", destination: "ZZZ"));
         }
 
         [Fact]
@@ -31,8 +31,27 @@ namespace AdventOfCode.Tests
                 { "ZZZ", ("ZZZ", "ZZZ") },
             };
             HauntedWasteland pathFinder = new() { Network = network, Path = path };
-            Assert.Equal(6, pathFinder.NumSteps(origin: "AAA", destination: "ZZZ"));
+            Assert.Equal(6, pathFinder.NumStepsSinglePath(origin: "AAA", destination: "ZZZ"));
 
+        }
+
+        [Fact]
+        public void TestCanExploreSimultaneousPathsAccordingToLastCharacter()
+        {
+            string path = "LR";
+            Dictionary<string, (string, string)> network = new()
+            {
+                { "11A", ("11B", "XXX") },
+                { "11B", ("XXX", "11Z") },
+                { "11Z", ("11B", "XXX") },
+                { "22A", ("22B", "XXX") },
+                { "22B", ("22C", "22C") },
+                { "22C", ("22Z", "22Z") },
+                { "22Z", ("22B", "22B") },
+                { "XXX", ("XXX", "XXX") },
+            };
+            HauntedWasteland pathFinder = new() { Network = network, Path = path };
+            Assert.Equal(6, pathFinder.NumStepsSimultaneousPaths('A', 'Z'));
         }
     }
 }
