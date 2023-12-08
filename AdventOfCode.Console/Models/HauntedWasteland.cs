@@ -93,13 +93,7 @@ namespace AdventOfCode.Console.Models
                 return Math.Abs(a * b) / FindGCD(a, b);
             }
 
-            long lcm = numbers[0];
-            for (int i = 1; i < numbers.Length; i++)
-            {
-                lcm = FindLCM(lcm, numbers[i]);
-            }
-
-            return lcm;
+            return numbers.Aggregate((currentLCM, nextNumber) => FindLCM(currentLCM, nextNumber));
         }
 
         private TerminalSteps FindTerminalSteps(string node, Func<string, bool> isTerminal)
