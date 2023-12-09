@@ -91,12 +91,16 @@ Console.WriteLine($"Day 8 - Haunted Wasteland - Number of steps with simultaneou
 
 var sequencesFile = input.GetPath(day: 9);
 List<long> nextTerms = new();
+List<long> previousTerms = new();
 foreach (string line in File.ReadAllLines(sequencesFile))
 {
     List<long> sequence = line.Split(" ").Select(long.Parse).ToList();
     long nextTerm = MirageMaintenance.NextTerm(sequence);
+    long previousTerm = MirageMaintenance.PreviousTerm(sequence);
     nextTerms.Add(nextTerm);
+    previousTerms.Add(previousTerm);
 }
 Console.WriteLine($"Day 9 - Mirage Maintenance - Sum of all next terms: {nextTerms.Sum()}");
+Console.WriteLine($"Day 9 - Mirage Maintenance - Sum of all previous terms: {previousTerms.Sum()}");
 
 #endregion

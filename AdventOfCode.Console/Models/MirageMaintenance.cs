@@ -2,7 +2,8 @@ namespace AdventOfCode.Console.Models
 {
     public static class MirageMaintenance
     {
-        public static long NextTerm(List<long> sequence)
+        // TODO: Refactor this class to use a more efficient algorithm
+        public static List<List<long>> Differences(List<long> sequence)
         {
             List<List<long>> differences = new() { sequence };
             for (int i = 0; i < sequence.Count - 1; i++)
@@ -15,6 +16,12 @@ namespace AdventOfCode.Console.Models
                 if (difference.All(d => d == 0)) break;
                 differences.Add(difference);
             }
+            return differences;
+        }
+
+        public static long NextTerm(List<long> sequence)
+        {
+            List<List<long>> differences = Differences(sequence);
 
             for (int i = differences.Count - 1; i >= 0; i--)
             {
@@ -23,6 +30,19 @@ namespace AdventOfCode.Console.Models
                 differences[i].Add(nextTerm);
             }
             return differences[0][^1];
+        }
+
+        public static long PreviousTerm(List<long> sequence)
+        {
+            List<List<long>> differences = Differences(sequence);
+
+            for (int i = differences.Count - 1; i >= 0; i--)
+            {
+                long previousTerm = differences[i][0];
+                if (i < differences.Count - 1) previousTerm -= differences[i + 1][0];
+                differences[i].Insert(0, previousTerm);
+            }
+            return differences[0][0];
         }
 
     }
