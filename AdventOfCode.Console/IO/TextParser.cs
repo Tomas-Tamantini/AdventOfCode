@@ -155,7 +155,7 @@ namespace AdventOfCode.Console.IO
             return new CamelBid(hand, bid);
         }
 
-        public static HauntedWasteland ParseHauntedWasteLandAndPath(string fileName)
+        public static HauntedWasteland ParseHauntedWasteland(string fileName)
         {
             var lines = File.ReadAllLines(fileName, Encoding.UTF8);
             string path = "";

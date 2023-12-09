@@ -79,10 +79,24 @@ Console.WriteLine($"Day 7 - Camel Cards - Total winnings with jokers: {jokerGame
 
 #region Day 8 - Haunted Wasteland
 
-var wasteland = TextParser.ParseHauntedWasteLandAndPath(input.GetPath(day: 8));
+var wasteland = TextParser.ParseHauntedWasteland(input.GetPath(day: 8));
 int numStepsSinglePath = wasteland.NumStepsSinglePath("AAA", "ZZZ");
 Console.WriteLine($"Day 8 - Haunted Wasteland - Number of steps with single path: {numStepsSinglePath}");
 long numStepsSimultaneousPaths = wasteland.NumStepsSimultaneousPaths('A', 'Z');
 Console.WriteLine($"Day 8 - Haunted Wasteland - Number of steps with simultaneous paths: {numStepsSimultaneousPaths}");
+
+#endregion
+
+#region Day 9 - Mirage Maintenance
+
+var sequencesFile = input.GetPath(day: 9);
+List<long> nextTerms = new();
+foreach (string line in File.ReadAllLines(sequencesFile))
+{
+    List<long> sequence = line.Split(" ").Select(long.Parse).ToList();
+    long nextTerm = MirageMaintenance.NextTerm(sequence);
+    nextTerms.Add(nextTerm);
+}
+Console.WriteLine($"Day 9 - Mirage Maintenance - Sum of all next terms: {nextTerms.Sum()}");
 
 #endregion
