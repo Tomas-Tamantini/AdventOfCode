@@ -23,6 +23,7 @@ namespace AdventOfCode.Console.IO
                 "CamelCards",
                 "HauntedWasteland",
                 "MirageMaintenance",
+                "PipeMaze",
             };
             return Path.Combine(inputFolder, $"{inputFiles[day - 1]}Input.txt");
         }

@@ -104,3 +104,13 @@ Console.WriteLine($"Day 9 - Mirage Maintenance - Sum of all next terms: {nextTer
 Console.WriteLine($"Day 9 - Mirage Maintenance - Sum of all previous terms: {previousTerms.Sum()}");
 
 #endregion
+
+#region Day 10 - Pipe Maze
+
+string pipeMazeFile = input.GetPath(day: 10);
+string pipeMazeText = File.ReadAllText(pipeMazeFile);
+PipeMaze pipeMaze = new(pipeMazeText);
+Console.WriteLine($"Day 10 - Pipe Maze - Furthest point in loop: {pipeMaze.LoopLength() / 2}");
+Console.WriteLine($"Day 10 - Pipe Maze - Number of points inside loop: {pipeMaze.NumPointsInsideLoop()}");
+
+#endregion
