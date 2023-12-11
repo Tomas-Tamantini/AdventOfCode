@@ -24,6 +24,7 @@ namespace AdventOfCode.Console.IO
                 "HauntedWasteland",
                 "MirageMaintenance",
                 "PipeMaze",
+                "CosmicExpansion",
             };
             return Path.Combine(inputFolder, $"{inputFiles[day - 1]}Input.txt");
         }
