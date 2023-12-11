@@ -2,6 +2,7 @@
 using AdventOfCode.Console.IO;
 
 var input = new InputPath();
+var parser = new TextParser(new FileReader());
 
 #region Day 1 - Trebuchet
 
@@ -16,7 +17,7 @@ Console.WriteLine($"Day 1 - Trebuchet - Sum of all numeric values w/ spelled out
 #region Day 2 - Cube Conundrum
 
 var bag = new CubeCollection(Red: 12, Green: 13, Blue: 14);
-var games = TextParser.ParseCubeGamesFromTextFile(input.GetPath(day: 2));
+var games = parser.ParseCubeGamesFromTextFile(input.GetPath(day: 2));
 var sumOfIdsOfAllPossibleGames = CubeConundrum.SumOfIdsOfAllPossibleGames(bag, games);
 Console.WriteLine($"Day 2 - Cube Conundrum - Sum of ids of all possible games: {sumOfIdsOfAllPossibleGames}");
 var sumOfAllPowers = CubeConundrum.SumOfPowersOfMinBags(games);
@@ -38,7 +39,7 @@ Console.WriteLine($"Day 3 - Gear Ratios - Sum ofproduct of gears: {sumOfGearRati
 
 #region Day 4 - Scratchcards
 
-var scratchcardGames = TextParser.ParseScratchcardsFromTextFile(input.GetPath(day: 4));
+var scratchcardGames = parser.ParseScratchcardsFromTextFile(input.GetPath(day: 4));
 var scratchcards = new Scratchcards(scratchcardGames);
 Console.WriteLine($"Day 4 - Scratchcards - Total points: {scratchcards.TotalPoints()}");
 Console.WriteLine($"Day 4 - Scratchcards - Total cards: {scratchcards.CardsMultiplicity().Sum()}");
@@ -56,11 +57,11 @@ Console.WriteLine($"Day 5 - Fertilizer - Lowest location number with seeds as ra
 
 #region Day 6 - Boat race
 
-var raceSpecsWithSpaces = TextParser.ParseBoatRace(input.GetPath(day: 6), ignoreSpaces: false);
+var raceSpecsWithSpaces = parser.ParseBoatRace(input.GetPath(day: 6), ignoreSpaces: false);
 long product = raceSpecsWithSpaces.Aggregate(1L, (currentProduct, raceSpec) => currentProduct * BoatRace.NumWaysToBreakRecord(raceSpec));
 Console.WriteLine($"Day 6 - Boat Race - Product of number of ways to beat records with spaces: {product}");
 
-var raceSpecsWithoutSpaces = TextParser.ParseBoatRace(input.GetPath(day: 6), ignoreSpaces: true);
+var raceSpecsWithoutSpaces = parser.ParseBoatRace(input.GetPath(day: 6), ignoreSpaces: true);
 product = raceSpecsWithoutSpaces.Aggregate(1L, (currentProduct, raceSpec) => currentProduct * BoatRace.NumWaysToBreakRecord(raceSpec));
 Console.WriteLine($"Day 6 - Boat Race - Product of number of ways to beat records ignoring spaces: {product}");
 
@@ -68,7 +69,7 @@ Console.WriteLine($"Day 6 - Boat Race - Product of number of ways to beat record
 
 #region Day 7 - Camel Cards
 
-var camelBids = TextParser.ParseCamelBids(input.GetPath(day: 7));
+var camelBids = parser.ParseCamelBids(input.GetPath(day: 7));
 var defaultGame = new CamelCards(camelBids, new DefaultCamelRanker());
 Console.WriteLine($"Day 7 - Camel Cards - Total winnings: {defaultGame.TotalWinnings()}");
 
@@ -79,7 +80,7 @@ Console.WriteLine($"Day 7 - Camel Cards - Total winnings with jokers: {jokerGame
 
 #region Day 8 - Haunted Wasteland
 
-var wasteland = TextParser.ParseHauntedWasteland(input.GetPath(day: 8));
+var wasteland = parser.ParseHauntedWasteland(input.GetPath(day: 8));
 int numStepsSinglePath = wasteland.NumStepsSinglePath("AAA", "ZZZ");
 Console.WriteLine($"Day 8 - Haunted Wasteland - Number of steps with single path: {numStepsSinglePath}");
 long numStepsSimultaneousPaths = wasteland.NumStepsSimultaneousPaths('A', 'Z');
@@ -112,5 +113,14 @@ string pipeMazeText = File.ReadAllText(pipeMazeFile);
 PipeMaze pipeMaze = new(pipeMazeText);
 Console.WriteLine($"Day 10 - Pipe Maze - Furthest point in loop: {pipeMaze.LoopLength() / 2}");
 Console.WriteLine($"Day 10 - Pipe Maze - Number of points inside loop: {pipeMaze.NumPointsInsideLoop()}");
+
+#endregion
+
+#region Day 11 - Cosmic Expansion
+
+string cosmicExpansionFile = input.GetPath(day: 11);
+CosmicExpansion cosmicExpansion = parser.ParseCosmicExpansion(cosmicExpansionFile);
+int totalDistance = cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies();
+Console.WriteLine($"Day 11 - Cosmic Expansion - Total distance between all pairs of galaxies: {totalDistance}");
 
 #endregion

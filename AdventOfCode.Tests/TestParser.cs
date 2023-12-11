@@ -1,4 +1,6 @@
-﻿using AdventOfCode.Console.IO;
+﻿using System.Text;
+using AdventOfCode.Console.IO;
+using Moq;
 
 namespace AdventOfCode.Tests
 {
@@ -91,6 +93,28 @@ namespace AdventOfCode.Tests
             var bid = TextParser.ParseCamelBid(bidText);
             Assert.Equal("A23A4", bid.Hand);
             Assert.Equal(1, bid.Bid);
+        }
+
+        [Fact]
+        public void TestCanParseCosmicExpansion()
+        {
+            var filename = "CosmicExpansionInput.txt";
+            var fileContent = @"...#......
+                                .......#..
+                                #.........
+                                ..........
+                                ......#...
+                                .#........
+                                .........#
+                                ..........
+                                .......#..
+                                #...#.....";
+            var fileReaderMock = new Mock<IFileReader>();
+            fileReaderMock.Setup(fr => fr.ReadAllLines(filename)).Returns(fileContent.Split('\n'));
+            var parser = new TextParser(fileReaderMock.Object);
+            var cosmicExpansion = parser.ParseCosmicExpansion(filename);
+            Assert.Equal(374, cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies());
+
         }
     }
 }

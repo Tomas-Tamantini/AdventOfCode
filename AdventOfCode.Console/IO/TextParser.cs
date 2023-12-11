@@ -3,12 +3,32 @@ using System.Text;
 
 namespace AdventOfCode.Console.IO
 {
-    public static class TextParser
+    public interface IFileReader
     {
-        public static List<CubeGame> ParseCubeGamesFromTextFile(string fileName)
+        string[] ReadAllLines(string path);
+    }
+
+    public class FileReader : IFileReader
+    {
+        public string[] ReadAllLines(string path)
+        {
+            return File.ReadAllLines(path, Encoding.UTF8);
+        }
+    }
+
+    public class TextParser
+    {
+        private readonly IFileReader fileReader;
+
+        public TextParser(IFileReader fileReader)
+        {
+            this.fileReader = fileReader;
+        }
+
+        public List<CubeGame> ParseCubeGamesFromTextFile(string fileName)
         {
             var games = new List<CubeGame>();
-            var lines = File.ReadAllLines(fileName, Encoding.UTF8);
+            var lines = fileReader.ReadAllLines(fileName);
             foreach (var line in lines)
                 games.Add(ParseCubeGame(line));
             return games;
@@ -40,10 +60,10 @@ namespace AdventOfCode.Console.IO
             return new CubeCollection(red, green, blue);
         }
 
-        public static List<ScratchcardGame> ParseScratchcardsFromTextFile(string fileName)
+        public List<ScratchcardGame> ParseScratchcardsFromTextFile(string fileName)
         {
             var games = new List<ScratchcardGame>();
-            var lines = File.ReadAllLines(fileName, Encoding.UTF8);
+            var lines = fileReader.ReadAllLines(fileName);
             foreach (var line in lines)
                 games.Add(ParseScratchcard(line));
             return games;
@@ -125,11 +145,11 @@ namespace AdventOfCode.Console.IO
             return new SourceDestinationMapper(sourceName, destinationName, intervalOffsets);
         }
 
-        public static List<RaceSpecification> ParseBoatRace(string fileName, bool ignoreSpaces)
+        public List<RaceSpecification> ParseBoatRace(string fileName, bool ignoreSpaces)
         {
             List<long> times = new();
             List<long> distances = new();
-            foreach (var line in File.ReadAllLines(fileName, Encoding.UTF8))
+            foreach (var line in fileReader.ReadAllLines(fileName))
             {
                 var lineParts = line.Split(":");
                 string numbers = ignoreSpaces ? lineParts[1].Replace(" ", "") : lineParts[1];
@@ -141,9 +161,9 @@ namespace AdventOfCode.Console.IO
             return times.Zip(distances, (time, distance) => new RaceSpecification(RaceTime: time, PreviousRecord: distance)).ToList();
         }
 
-        public static List<CamelBid> ParseCamelBids(string fileName)
+        public List<CamelBid> ParseCamelBids(string fileName)
         {
-            var lines = File.ReadAllLines(fileName, Encoding.UTF8);
+            var lines = fileReader.ReadAllLines(fileName);
             return lines.Select(line => ParseCamelBid(line)).ToList();
         }
 
@@ -155,9 +175,9 @@ namespace AdventOfCode.Console.IO
             return new CamelBid(hand, bid);
         }
 
-        public static HauntedWasteland ParseHauntedWasteland(string fileName)
+        public HauntedWasteland ParseHauntedWasteland(string fileName)
         {
-            var lines = File.ReadAllLines(fileName, Encoding.UTF8);
+            var lines = fileReader.ReadAllLines(fileName);
             string path = "";
             Dictionary<string, (string, string)> network = new();
             foreach (string line in lines)
@@ -175,6 +195,23 @@ namespace AdventOfCode.Console.IO
                 }
             }
             return new HauntedWasteland() { Network = network, Path = path };
+        }
+
+        public CosmicExpansion ParseCosmicExpansion(string fileName)
+        {
+            var lines = fileReader.ReadAllLines(fileName);
+            var universeWidth = lines[0].Trim().Length;
+            var universeHeight = lines.Length;
+            var galaxies = new List<(int, int)>();
+            for (int y = 0; y < universeHeight; y++)
+            {
+                var line = lines[y].Trim();
+                for (int x = 0; x < universeWidth; x++)
+                {
+                    if (line[x] == '#') galaxies.Add((x, y));
+                }
+            }
+            return new CosmicExpansion(universeWidth, universeHeight, galaxies);
         }
     }
 }
