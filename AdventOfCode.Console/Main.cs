@@ -120,7 +120,9 @@ Console.WriteLine($"Day 10 - Pipe Maze - Number of points inside loop: {pipeMaze
 
 string cosmicExpansionFile = input.GetPath(day: 11);
 CosmicExpansion cosmicExpansion = parser.ParseCosmicExpansion(cosmicExpansionFile);
-int totalDistance = cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies();
-Console.WriteLine($"Day 11 - Cosmic Expansion - Total distance between all pairs of galaxies: {totalDistance}");
+long distancesExpansionRate2 = cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies(expansionRate: 2);
+Console.WriteLine($"Day 11 - Cosmic Expansion - Total distance between all pairs of galaxies w/ expansion rate 2: {distancesExpansionRate2}");
+long distancesExpansionRate10 = cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies(expansionRate: 1000000);
+Console.WriteLine($"Day 11 - Cosmic Expansion - Total distance between all pairs of galaxies w/ expansion rate 1,000,000: {distancesExpansionRate10}");
 
 #endregion

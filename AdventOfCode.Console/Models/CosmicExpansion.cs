@@ -57,21 +57,22 @@ namespace AdventOfCode.Console.Models
             return Math.Abs(numEmptyColumnsAccumulated[x1] - numEmptyColumnsAccumulated[x2]);
         }
 
-        public int DistanceBetweenGalaxies(int galaxy1Idx, int galaxy2Idx)
+        public long DistanceBetweenGalaxies(int galaxy1Idx, int galaxy2Idx, int expansionRate = 2)
         {
             (int x1, int y1) = galaxies[galaxy1Idx];
             (int x2, int y2) = galaxies[galaxy2Idx];
-            return Math.Abs(x1 - x2) + Math.Abs(y1 - y2) + EmptyRowsBetween(y1, y2) + EmptyColumnsBetween(x1, x2);
+            int expandedSpace = EmptyColumnsBetween(x1, x2) + EmptyRowsBetween(y1, y2);
+            return Math.Abs(x1 - x2) + Math.Abs(y1 - y2) + expandedSpace * (expansionRate - 1);
         }
 
-        public int SumDistancesBetweenAllPairsOfGalaxies()
+        public long SumDistancesBetweenAllPairsOfGalaxies(int expansionRate = 2)
         {
-            int sum = 0;
+            long sum = 0;
             for (int i = 0; i < galaxies.Count - 1; i++)
             {
                 for (int j = i + 1; j < galaxies.Count; j++)
                 {
-                    sum += DistanceBetweenGalaxies(i, j);
+                    sum += DistanceBetweenGalaxies(i, j, expansionRate);
                 }
             }
             return sum;
