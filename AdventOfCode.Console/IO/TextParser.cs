@@ -214,7 +214,7 @@ namespace AdventOfCode.Console.IO
             return new CosmicExpansion(universeWidth, universeHeight, galaxies);
         }
 
-        public static DamagedSprings ParseDamagedSprings(string line)
+        public static DamagedSprings ParseDamagedSprings(string line, int foldNumber = 1)
         {
             string[] lineParts = line.Split(" ");
             string records = lineParts[0].Trim();
@@ -222,7 +222,11 @@ namespace AdventOfCode.Console.IO
                                      .Select(int.Parse)
                                      .ToArray();
 
-            return new DamagedSprings(ConditionRecords: records, ContiguousGroups: groups);
+            string repeatedRecords = string.Join("?", Enumerable.Repeat(records, foldNumber).ToArray());
+
+            int[] repeatedGroups = Enumerable.Repeat(groups, foldNumber).SelectMany(x => x).ToArray();
+
+            return new DamagedSprings(ConditionRecords: repeatedRecords, ContiguousGroups: repeatedGroups);
         }
     }
 }

@@ -130,14 +130,22 @@ Console.WriteLine($"Day 11 - Cosmic Expansion - Total distance between all pairs
 #region Day 12 - Hot Springs
 
 string hotSpringsFile = input.GetPath(day: 12);
-long sumArrangements = 0;
+long sumArrangementsOneFold = 0;
 foreach (string line in File.ReadAllLines(hotSpringsFile))
 {
     DamagedSprings damagedSprings = TextParser.ParseDamagedSprings(line);
-    HotSprings hotSprings = new HotSprings(damagedSprings);
-    sumArrangements += hotSprings.NumArrangements();
+    HotSprings hotSprings = new(damagedSprings);
+    sumArrangementsOneFold += hotSprings.NumArrangements();
 }
-Console.WriteLine($"Day 12 - Hot Springs - Sum of all arrangements: {sumArrangements}");
 
+long sumArrangementsFiveFold = 0;
+foreach (string line in File.ReadAllLines(hotSpringsFile))
+{
+    DamagedSprings damagedSprings = TextParser.ParseDamagedSprings(line, foldNumber: 5);
+    HotSprings hotSprings = new(damagedSprings);
+    sumArrangementsFiveFold += hotSprings.NumArrangements();
+}
+Console.WriteLine($"Day 12 - Hot Springs - Sum of all arrangements with one fold: {sumArrangementsOneFold}");
+Console.WriteLine($"Day 12 - Hot Springs - Sum of all arrangements with five folds: {sumArrangementsFiveFold}");
 
 #endregion

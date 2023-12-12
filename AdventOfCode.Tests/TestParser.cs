@@ -125,5 +125,14 @@ namespace AdventOfCode.Tests
             Assert.Equal(".#...#....###.", damagedSprings.ConditionRecords);
             Assert.Equal(3, damagedSprings.ContiguousGroups.Length);
         }
+
+        [Fact]
+        public void TestCanParseDamagedSpringUnfoldedNTimes()
+        {
+            string springStr = ".# 1";
+            DamagedSprings damagedSprings = TextParser.ParseDamagedSprings(springStr, foldNumber: 3);
+            Assert.Equal(".#?.#?.#", damagedSprings.ConditionRecords);
+            Assert.Equal(3, damagedSprings.ContiguousGroups.Length);
+        }
     }
 }
