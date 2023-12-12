@@ -122,7 +122,22 @@ string cosmicExpansionFile = input.GetPath(day: 11);
 CosmicExpansion cosmicExpansion = parser.ParseCosmicExpansion(cosmicExpansionFile);
 long distancesExpansionRate2 = cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies(expansionRate: 2);
 Console.WriteLine($"Day 11 - Cosmic Expansion - Total distance between all pairs of galaxies w/ expansion rate 2: {distancesExpansionRate2}");
-long distancesExpansionRate10 = cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies(expansionRate: 1000000);
-Console.WriteLine($"Day 11 - Cosmic Expansion - Total distance between all pairs of galaxies w/ expansion rate 1,000,000: {distancesExpansionRate10}");
+long distancesExpansionRate1M = cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies(expansionRate: 1000000);
+Console.WriteLine($"Day 11 - Cosmic Expansion - Total distance between all pairs of galaxies w/ expansion rate 1,000,000: {distancesExpansionRate1M}");
+
+#endregion
+
+#region Day 12 - Hot Springs
+
+string hotSpringsFile = input.GetPath(day: 12);
+long sumArrangements = 0;
+foreach (string line in File.ReadAllLines(hotSpringsFile))
+{
+    DamagedSprings damagedSprings = TextParser.ParseDamagedSprings(line);
+    HotSprings hotSprings = new HotSprings(damagedSprings);
+    sumArrangements += hotSprings.NumArrangements();
+}
+Console.WriteLine($"Day 12 - Hot Springs - Sum of all arrangements: {sumArrangements}");
+
 
 #endregion

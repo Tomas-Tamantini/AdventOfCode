@@ -213,5 +213,16 @@ namespace AdventOfCode.Console.IO
             }
             return new CosmicExpansion(universeWidth, universeHeight, galaxies);
         }
+
+        public static DamagedSprings ParseDamagedSprings(string line)
+        {
+            string[] lineParts = line.Split(" ");
+            string records = lineParts[0].Trim();
+            int[] groups = lineParts[1].Split(',')
+                                     .Select(int.Parse)
+                                     .ToArray();
+
+            return new DamagedSprings(ConditionRecords: records, ContiguousGroups: groups);
+        }
     }
 }

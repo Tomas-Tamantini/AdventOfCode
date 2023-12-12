@@ -116,5 +116,14 @@ namespace AdventOfCode.Tests
             Assert.Equal(374, cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies());
 
         }
+
+        [Fact]
+        public void TestCanParseDamagedSpring()
+        {
+            string springStr = ".#...#....###. 1,1,3";
+            DamagedSprings damagedSprings = TextParser.ParseDamagedSprings(springStr);
+            Assert.Equal(".#...#....###.", damagedSprings.ConditionRecords);
+            Assert.Equal(3, damagedSprings.ContiguousGroups.Length);
+        }
     }
 }
