@@ -7,27 +7,27 @@ namespace AdventOfCode.Tests
             return string.Join(Environment.NewLine, input.ToCharArray());
         }
         [Fact]
-        public void TestReflectionLineForRowWithNoSymmetryIsZero()
+        public void TestReflectionLineForRowWithNoSymmetryIsMinusOne()
         {
             string rowInput = ".#";
             PointOfIncidence rowIncidence = new(rowInput);
-            Assert.Equal(0, rowIncidence.ColumnMirrorIdx());
+            Assert.Equal(-1, rowIncidence.ColumnMirrorIdx());
 
             string colInput = RowToCol(rowInput);
             PointOfIncidence colIncidence = new(colInput);
-            Assert.Equal(0, colIncidence.RowMirrorIdx());
+            Assert.Equal(-1, colIncidence.RowMirrorIdx());
         }
 
         [Fact]
-        public void TestReflectionLineForRowWithOddSymmetryIsZero()
+        public void TestReflectionLineForRowWithOddSymmetryIsMinusOne()
         {
             string rowInput = ".#.";
             PointOfIncidence rowIncidence = new(rowInput);
-            Assert.Equal(0, rowIncidence.ColumnMirrorIdx());
+            Assert.Equal(-1, rowIncidence.ColumnMirrorIdx());
 
             string colInput = RowToCol(rowInput);
             PointOfIncidence colIncidence = new(colInput);
-            Assert.Equal(0, colIncidence.RowMirrorIdx());
+            Assert.Equal(-1, colIncidence.RowMirrorIdx());
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace AdventOfCode.Tests
 
             PointOfIncidence incidenceA = new(inputA);
             Assert.Equal(4, incidenceA.ColumnMirrorIdx());
-            Assert.Equal(0, incidenceA.RowMirrorIdx());
+            Assert.Equal(-1, incidenceA.RowMirrorIdx());
 
             string inputB = @"#...##..#
                               #....#..#
@@ -78,8 +78,36 @@ namespace AdventOfCode.Tests
                               #....#..#";
 
             PointOfIncidence incidenceB = new(inputB);
-            Assert.Equal(0, incidenceB.ColumnMirrorIdx());
+            Assert.Equal(-1, incidenceB.ColumnMirrorIdx());
             Assert.Equal(3, incidenceB.RowMirrorIdx());
+        }
+
+        [Fact]
+        public void TestCanDetectReflectionWithMismatches()
+        {
+            string inputA = @"#.##..##.
+                              ..#.##.#.
+                              ##......#
+                              ##......#
+                              ..#.##.#.
+                              ..##..##.
+                              #.#.##.#.";
+
+            PointOfIncidence incidenceA = new(inputA);
+            Assert.Equal(-1, incidenceA.ColumnMirrorIdx(numMismatches: 1));
+            Assert.Equal(2, incidenceA.RowMirrorIdx(numMismatches: 1));
+
+            string inputB = @"#...##..#
+                              #....#..#
+                              ..##..###
+                              #####.##.
+                              #####.##.
+                              ..##..###
+                              #....#..#";
+
+            PointOfIncidence incidenceB = new(inputB);
+            Assert.Equal(-1, incidenceB.ColumnMirrorIdx(numMismatches: 1));
+            Assert.Equal(0, incidenceB.RowMirrorIdx(numMismatches: 1));
         }
     }
 }

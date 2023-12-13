@@ -154,14 +154,21 @@ Console.WriteLine($"Day 12 - Hot Springs - Sum of all arrangements with five fol
 
 string poiFile = input.GetPath(day: 13);
 List<PointOfIncidence> pointOfIncidences = parser.ParsePointsOfIncidence(poiFile);
-int sumCols = 0;
-int sumRows = 0;
+int sumColsNoMismatch = 0;
+int sumRowsNoMismatch = 0;
+int sumColsOneMismatch = 0;
+int sumRowsOneMismatch = 0;
 foreach (var poi in pointOfIncidences)
 {
-    sumCols += poi.ColumnMirrorIdx() + 1;
-    sumRows += poi.RowMirrorIdx() + 1;
+    sumColsNoMismatch += poi.ColumnMirrorIdx() + 1;
+    sumRowsNoMismatch += poi.RowMirrorIdx() + 1;
+    sumColsOneMismatch += poi.ColumnMirrorIdx(numMismatches: 1) + 1;
+    sumRowsOneMismatch += poi.RowMirrorIdx(numMismatches: 1) + 1;
 }
 
-Console.WriteLine($"Day 13 - {sumRows * 100 + sumCols}");
+int sumNoMismatch = sumRowsNoMismatch * 100 + sumColsNoMismatch;
+int sumOneMismatch = sumRowsOneMismatch * 100 + sumColsOneMismatch;
+Console.WriteLine($"Day 13 - Point of Incidence - Summary of reflection lines with no mismatches: {sumNoMismatch}");
+Console.WriteLine($"Day 13 - Point of Incidence - Summary of reflection lines with one mismatch: {sumOneMismatch}");
 
 #endregion
