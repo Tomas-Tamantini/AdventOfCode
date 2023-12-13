@@ -149,3 +149,19 @@ Console.WriteLine($"Day 12 - Hot Springs - Sum of all arrangements with one fold
 Console.WriteLine($"Day 12 - Hot Springs - Sum of all arrangements with five folds: {sumArrangementsFiveFold}");
 
 #endregion
+
+#region Day 13 - Point of Incidence
+
+string poiFile = input.GetPath(day: 13);
+List<PointOfIncidence> pointOfIncidences = parser.ParsePointsOfIncidence(poiFile);
+int sumCols = 0;
+int sumRows = 0;
+foreach (var poi in pointOfIncidences)
+{
+    sumCols += poi.ColumnMirrorIdx() + 1;
+    sumRows += poi.RowMirrorIdx() + 1;
+}
+
+Console.WriteLine($"Day 13 - {sumRows * 100 + sumCols}");
+
+#endregion

@@ -228,5 +228,29 @@ namespace AdventOfCode.Console.IO
 
             return new DamagedSprings(ConditionRecords: repeatedRecords, ContiguousGroups: repeatedGroups);
         }
+
+        public List<PointOfIncidence> ParsePointsOfIncidence(string filename)
+        {
+            List<string> patterns = new();
+            StringBuilder currentPattern = new();
+            string currentStr;
+            foreach (string line in fileReader.ReadAllLines(filename))
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    currentStr = currentPattern.ToString().Trim();
+                    if (currentStr.Length > 0) patterns.Add(currentPattern.ToString());
+                    currentPattern = new StringBuilder();
+                }
+                else
+                {
+                    currentPattern.Append('\n');
+                    currentPattern.Append(line);
+                }
+            }
+            currentStr = currentPattern.ToString().Trim();
+            if (currentStr.Length > 0) patterns.Add(currentPattern.ToString());
+            return patterns.Select(p => new PointOfIncidence(p.Trim())).ToList();
+        }
     }
 }

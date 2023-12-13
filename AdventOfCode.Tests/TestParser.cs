@@ -114,7 +114,6 @@ namespace AdventOfCode.Tests
             var parser = new TextParser(fileReaderMock.Object);
             var cosmicExpansion = parser.ParseCosmicExpansion(filename);
             Assert.Equal(374, cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies());
-
         }
 
         [Fact]
@@ -133,6 +132,32 @@ namespace AdventOfCode.Tests
             DamagedSprings damagedSprings = TextParser.ParseDamagedSprings(springStr, foldNumber: 3);
             Assert.Equal(".#?.#?.#", damagedSprings.ConditionRecords);
             Assert.Equal(3, damagedSprings.ContiguousGroups.Length);
+        }
+
+        [Fact]
+        public void TestCanParsePointsOfIncidence()
+        {
+            var filename = "PointsOfIncidenceInput.txt";
+            var fileContent = @"#.##..##.
+                                ..#.##.#.
+                                ##......#
+                                ##......#
+                                ..#.##.#.
+                                ..##..##.
+                                #.#.##.#.
+
+                                #...##..#
+                                #....#..#
+                                ..##..###
+                                #####.##.
+                                #####.##.
+                                ..##..###
+                                #....#..#";
+            var fileReaderMock = new Mock<IFileReader>();
+            fileReaderMock.Setup(fr => fr.ReadAllLines(filename)).Returns(fileContent.Split('\n'));
+            var parser = new TextParser(fileReaderMock.Object);
+            List<PointOfIncidence> pointOfIncidences = parser.ParsePointsOfIncidence(filename);
+            Assert.Equal(2, pointOfIncidences.Count);
         }
     }
 }

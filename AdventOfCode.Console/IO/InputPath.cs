@@ -25,7 +25,8 @@ namespace AdventOfCode.Console.IO
                 "MirageMaintenance",
                 "PipeMaze",
                 "CosmicExpansion",
-                "HotSprings"
+                "HotSprings",
+                "PointOfIncidence"
             };
             return Path.Combine(inputFolder, $"{inputFiles[day - 1]}Input.txt");
         }
