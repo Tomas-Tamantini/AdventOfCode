@@ -23,14 +23,7 @@ namespace AdventOfCode.Console.Models
             _width = lines[0].Trim().Length;
             _height = lines.Length;
             _tiles = new GroundTile[_width, _height];
-            for (int y = 0; y < _height; y++)
-            {
-                string line = lines[y].Trim();
-                for (int x = 0; x < _width; x++)
-                {
-                    _tiles[x, y] = (GroundTile)line[x];
-                }
-            }
+            UpdateTiles(lines);
         }
 
         private void RollColumnNorth(int columnIdx)
@@ -146,12 +139,11 @@ namespace AdventOfCode.Console.Models
             }
         }
 
-        private void UpdateTiles(string newPattern)
+        private void UpdateTiles(string[] linesNewPattern)
         {
-            string[] lines = newPattern.Split('\n');
             for (int y = 0; y < _height; y++)
             {
-                string line = lines[y].Trim();
+                string line = linesNewPattern[y].Trim();
                 for (int x = 0; x < _width; x++)
                 {
                     _tiles[x, y] = (GroundTile)line[x];
@@ -174,7 +166,7 @@ namespace AdventOfCode.Console.Models
                     int cycleStart = seenDict[current];
                     int equivalentIdx = (int)((numCycles - cycleStart) % cycleLength) + cycleStart;
                     string pattern = seenList[equivalentIdx];
-                    UpdateTiles(pattern);
+                    UpdateTiles(pattern.Split('\n'));
                     break;
                 }
                 else
