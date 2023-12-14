@@ -172,3 +172,12 @@ Console.WriteLine($"Day 13 - Point of Incidence - Summary of reflection lines wi
 Console.WriteLine($"Day 13 - Point of Incidence - Summary of reflection lines with one mismatch: {sumOneMismatch}");
 
 #endregion
+
+#region Day 14 - Parabolic Reflector Dish
+
+string dishInput = File.ReadAllText(input.GetPath(day: 14));
+ParabolicReflectorDish dish = new(dishInput);
+dish.RollNorth();
+Console.WriteLine($"Day 14 - Parabolic Reflector Dish - Torque on south hinge: {dish.TorqueOnSouthHinge()}");
+
+#endregion

@@ -70,5 +70,24 @@ namespace AdventOfCode.Console.Models
             }
             return sb.ToString().Trim();
         }
+
+        public IEnumerable<int> RoundRocksPerRow()
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                int roundRocks = 0;
+                for (int x = 0; x < _width; x++)
+                {
+                    if (_tiles[x, y] == GroundTile.RoundRock) roundRocks++;
+                }
+                yield return roundRocks;
+            }
+        }
+
+        public int TorqueOnSouthHinge()
+        {
+            int[] distances = Enumerable.Range(1, _height).Reverse().ToArray();
+            return RoundRocksPerRow().Zip(distances, (load, distance) => load * distance).Sum();
+        }
     }
 }

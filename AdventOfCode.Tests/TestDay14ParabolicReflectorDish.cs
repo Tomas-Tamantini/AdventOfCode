@@ -119,5 +119,35 @@ namespace AdventOfCode.Tests
             dish.RollNorth();
             Assert.Equal(TrimInput(expected), dish.ToString());
         }
+
+        [Fact]
+        public void TestCanCountNumberOfRoundRocksPerRow()
+        {
+            string input = @"O....#
+                             O.OO#.
+                             .....#
+                             OO.#..";
+            ParabolicReflectorDish dish = new(input);
+            int[] numRoundRocks = dish.RoundRocksPerRow().ToArray();
+            int[] expected = { 1, 3, 0, 2 };
+            Assert.Equal(expected, numRoundRocks);
+        }
+
+        [Fact]
+        public void TestTorqueOnSouthHingeIsLoadTimesDistanceToBottom()
+        {
+            string input = @"OOOO.#.O..
+                                OO..#....#
+                                OO..O##..O
+                                O..#.OO...
+                                ........#.
+                                ..#....#.#
+                                ..O..#.O.O
+                                ..O.......
+                                #....###..
+                                #....#....";
+            ParabolicReflectorDish dish = new(input);
+            Assert.Equal(136, dish.TorqueOnSouthHinge());
+        }
     }
 }
