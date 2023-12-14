@@ -179,5 +179,9 @@ string dishInput = File.ReadAllText(input.GetPath(day: 14));
 ParabolicReflectorDish dish = new(dishInput);
 dish.Roll(CardinalDirection.North);
 Console.WriteLine($"Day 14 - Parabolic Reflector Dish - Torque on south hinge: {dish.TorqueOnSouthHinge()}");
+dish = new(dishInput);
+List<CardinalDirection> directions = new() { CardinalDirection.North, CardinalDirection.West, CardinalDirection.South, CardinalDirection.East, };
+dish.RunCycles(directions, numCycles: 1000000000);
+Console.WriteLine($"Day 14 - Parabolic Reflector Dish - Torque on south hinge after 1 billion cycles: {dish.TorqueOnSouthHinge()}");
 
 #endregion

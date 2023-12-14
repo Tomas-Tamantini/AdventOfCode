@@ -138,6 +138,53 @@ namespace AdventOfCode.Console.Models
             else if (direction == CardinalDirection.West) RollWest();
         }
 
+        public void RunCycle(IEnumerable<CardinalDirection> directions)
+        {
+            foreach (CardinalDirection direction in directions)
+            {
+                Roll(direction);
+            }
+        }
+
+        private void UpdateTiles(string newPattern)
+        {
+            string[] lines = newPattern.Split('\n');
+            for (int y = 0; y < _height; y++)
+            {
+                string line = lines[y].Trim();
+                for (int x = 0; x < _width; x++)
+                {
+                    _tiles[x, y] = (GroundTile)line[x];
+                }
+            }
+        }
+
+        public void RunCycles(IEnumerable<CardinalDirection> directions, long numCycles)
+        {
+            Dictionary<string, int> seenDict = new() { { ToString(), 0 } };
+            List<string> seenList = new() { ToString() };
+
+            for (long cycle = 0; cycle < numCycles; cycle++)
+            {
+                RunCycle(directions);
+                string current = ToString();
+                if (seenDict.ContainsKey(current))
+                {
+                    int cycleLength = seenList.Count - seenDict[current];
+                    int cycleStart = seenDict[current];
+                    int equivalentIdx = (int)((numCycles - cycleStart) % cycleLength) + cycleStart;
+                    string pattern = seenList[equivalentIdx];
+                    UpdateTiles(pattern);
+                    break;
+                }
+                else
+                {
+                    seenDict[current] = seenList.Count;
+                    seenList.Add(current);
+                }
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new();

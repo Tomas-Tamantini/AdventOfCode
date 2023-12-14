@@ -187,7 +187,70 @@ namespace AdventOfCode.Tests
             Assert.Equal(TrimInput(stateAfterRollSouth), dish.ToString());
             dish.Roll(CardinalDirection.West);
             Assert.Equal(TrimInput(stateAfterRollWest), dish.ToString());
+        }
 
+        [Fact]
+        public void TestCanRunCyclesOfTilts()
+        {
+            List<CardinalDirection> tilts = new()
+            {
+                CardinalDirection.North,
+                CardinalDirection.West,
+                CardinalDirection.South,
+                CardinalDirection.East,
+            };
+
+            string initialPattern = @"O....#....
+                                      O.OO#....#
+                                      .....##...
+                                      OO.#O....O
+                                      .O.....O#.
+                                      O.#..O.#.#
+                                      ..O..#O..O
+                                      .......O..
+                                      #....###..
+                                      #OO..#....";
+
+            string expected = @".....#....
+                                ....#...O#
+                                ...OO##...
+                                .OO#......
+                                .....OOO#.
+                                .O#...O#.#
+                                ....O#....
+                                ......OOOO
+                                #...O###..
+                                #..OO#....";
+
+            ParabolicReflectorDish dish = new(initialPattern);
+            dish.RunCycle(tilts);
+            Assert.Equal(TrimInput(expected), dish.ToString());
+        }
+
+        [Fact]
+        public void CanRunMultipleCyclesEfficiently()
+        {
+            List<CardinalDirection> tilts = new()
+            {
+                CardinalDirection.North,
+                CardinalDirection.West,
+                CardinalDirection.South,
+                CardinalDirection.East,
+            };
+
+            string initialPattern = @"O....#....
+                                      O.OO#....#
+                                      .....##...
+                                      OO.#O....O
+                                      .O.....O#.
+                                      O.#..O.#.#
+                                      ..O..#O..O
+                                      .......O..
+                                      #....###..
+                                      #OO..#....";
+            ParabolicReflectorDish dish = new(initialPattern);
+            dish.RunCycles(tilts, numCycles: 1000000000);
+            Assert.Equal(64, dish.TorqueOnSouthHinge());
         }
     }
 }
