@@ -9,6 +9,8 @@ namespace AdventOfCode.Console.Models
         RoundRock = 'O',
     }
 
+    public enum CardinalDirection { North, East, South, West }
+
     public class ParabolicReflectorDish
     {
         private readonly GroundTile[,] _tiles;
@@ -47,16 +49,96 @@ namespace AdventOfCode.Console.Models
             }
         }
 
-        public void RollNorth()
+        private void RollNorth()
         {
-            // Loop through columns:
             for (int colIdx = 0; colIdx < _width; colIdx++)
             {
                 RollColumnNorth(colIdx);
             }
         }
 
-        public string ToString()
+        private void RollColumnSouth(int columnIdx)
+        {
+            int obstaclePointer = _height;
+            for (int probePointer = _height - 1; probePointer >= 0; probePointer--)
+            {
+                GroundTile currentTile = _tiles[columnIdx, probePointer];
+                if (currentTile == GroundTile.CubeRock) obstaclePointer = probePointer;
+                else if (currentTile == GroundTile.RoundRock)
+                {
+                    obstaclePointer -= 1;
+                    _tiles[columnIdx, probePointer] = GroundTile.Ground;
+                    _tiles[columnIdx, obstaclePointer] = GroundTile.RoundRock;
+                }
+            }
+        }
+
+        private void RollSouth()
+        {
+            for (int colIdx = 0; colIdx < _width; colIdx++)
+            {
+                RollColumnSouth(colIdx);
+            }
+        }
+
+        private void RollRowEast(int rowIdx)
+        {
+            int obstaclePointer = _width;
+            for (int probePointer = _width - 1; probePointer >= 0; probePointer--)
+            {
+                GroundTile currentTile = _tiles[probePointer, rowIdx];
+                if (currentTile == GroundTile.CubeRock) obstaclePointer = probePointer;
+                else if (currentTile == GroundTile.RoundRock)
+                {
+                    obstaclePointer -= 1;
+                    _tiles[probePointer, rowIdx] = GroundTile.Ground;
+                    _tiles[obstaclePointer, rowIdx] = GroundTile.RoundRock;
+                }
+            }
+
+        }
+
+        private void RollEast()
+        {
+            for (int rowIdx = 0; rowIdx < _height; rowIdx++)
+            {
+                RollRowEast(rowIdx);
+            }
+        }
+
+        private void RollRowWest(int rowIdx)
+        {
+            int obstaclePointer = -1;
+            for (int probePointer = 0; probePointer < _width; probePointer++)
+            {
+                GroundTile currentTile = _tiles[probePointer, rowIdx];
+                if (currentTile == GroundTile.CubeRock) obstaclePointer = probePointer;
+                else if (currentTile == GroundTile.RoundRock)
+                {
+                    obstaclePointer += 1;
+                    _tiles[probePointer, rowIdx] = GroundTile.Ground;
+                    _tiles[obstaclePointer, rowIdx] = GroundTile.RoundRock;
+                }
+            }
+        }
+
+        private void RollWest()
+        {
+            for (int rowIdx = 0; rowIdx < _height; rowIdx++)
+            {
+                RollRowWest(rowIdx);
+            }
+        }
+
+        public void Roll(CardinalDirection direction)
+        {
+            if (direction == CardinalDirection.North) RollNorth();
+            else if (direction == CardinalDirection.South) RollSouth();
+            else if (direction == CardinalDirection.East) RollEast();
+            else if (direction == CardinalDirection.West) RollWest();
+        }
+
+        public override string ToString()
         {
             StringBuilder sb = new();
             for (int y = 0; y < _height; y++)

@@ -18,7 +18,7 @@ namespace AdventOfCode.Tests
                                          #
                                          .";
             ParabolicReflectorDish dish = new(noRoundRocksInput);
-            dish.RollNorth();
+            dish.Roll(CardinalDirection.North);
             Assert.Equal(TrimInput(noRoundRocksInput), dish.ToString());
         }
 
@@ -29,7 +29,7 @@ namespace AdventOfCode.Tests
                                                 .
                                                 .";
             ParabolicReflectorDish dish = new(roundRockOnFirstRowInput);
-            dish.RollNorth();
+            dish.Roll(CardinalDirection.North);
             Assert.Equal(TrimInput(roundRockOnFirstRowInput), dish.ToString());
         }
 
@@ -41,7 +41,7 @@ namespace AdventOfCode.Tests
                                                   O
                                                   .";
             ParabolicReflectorDish dish = new(roundRockWithObstacleAbove);
-            dish.RollNorth();
+            dish.Roll(CardinalDirection.North);
             Assert.Equal(TrimInput(roundRockWithObstacleAbove), dish.ToString());
         }
 
@@ -53,7 +53,7 @@ namespace AdventOfCode.Tests
                                                   O
                                                   .";
             ParabolicReflectorDish dish = new(roundRockWithObstacleAbove);
-            dish.RollNorth();
+            dish.Roll(CardinalDirection.North);
             Assert.Equal(TrimInput(roundRockWithObstacleAbove), dish.ToString());
         }
 
@@ -69,7 +69,7 @@ namespace AdventOfCode.Tests
                                 .
                                 .";
             ParabolicReflectorDish dish = new(unimpededRockInput);
-            dish.RollNorth();
+            dish.Roll(CardinalDirection.North);
             Assert.Equal(TrimInput(expected), dish.ToString());
         }
 
@@ -87,7 +87,7 @@ namespace AdventOfCode.Tests
                                 O
                                 .";
             ParabolicReflectorDish dish = new(roundRockWithObstacleAbove);
-            dish.RollNorth();
+            dish.Roll(CardinalDirection.North);
             Assert.Equal(TrimInput(expected), dish.ToString());
         }
 
@@ -116,7 +116,7 @@ namespace AdventOfCode.Tests
                                 #....###..
                                 #....#....";
             ParabolicReflectorDish dish = new(inputTwoD);
-            dish.RollNorth();
+            dish.Roll(CardinalDirection.North);
             Assert.Equal(TrimInput(expected), dish.ToString());
         }
 
@@ -137,17 +137,57 @@ namespace AdventOfCode.Tests
         public void TestTorqueOnSouthHingeIsLoadTimesDistanceToBottom()
         {
             string input = @"OOOO.#.O..
-                                OO..#....#
-                                OO..O##..O
-                                O..#.OO...
-                                ........#.
-                                ..#....#.#
-                                ..O..#.O.O
-                                ..O.......
-                                #....###..
-                                #....#....";
+                             OO..#....#
+                             OO..O##..O
+                             O..#.OO...
+                             ........#.
+                             ..#....#.#
+                             ..O..#.O.O
+                             ..O.......
+                             #....###..
+                             #....#....";
             ParabolicReflectorDish dish = new(input);
             Assert.Equal(136, dish.TorqueOnSouthHinge());
+        }
+
+        [Fact]
+        public void TestCanRollInAllFourDirections()
+        {
+            string initialState = @"....
+                                    #...
+                                    ...#
+                                    O...
+                                    O.#.";
+            string stateAfterRollNorth = @"....
+                                           #...
+                                           O..#
+                                           O...
+                                           ..#.";
+            string stateAfterRollEast = @"....
+                                          #...
+                                          ..O#
+                                          ...O
+                                          ..#.";
+            string stateAfterRollSouth = @"....
+                                           #...
+                                           ...#
+                                           ..O.
+                                           ..#O";
+            string stateAfterRollWest = @"....
+                                          #...
+                                          ...#
+                                          O...
+                                          ..#O";
+            ParabolicReflectorDish dish = new(initialState);
+            dish.Roll(CardinalDirection.North);
+            Assert.Equal(TrimInput(stateAfterRollNorth), dish.ToString());
+            dish.Roll(CardinalDirection.East);
+            Assert.Equal(TrimInput(stateAfterRollEast), dish.ToString());
+            dish.Roll(CardinalDirection.South);
+            Assert.Equal(TrimInput(stateAfterRollSouth), dish.ToString());
+            dish.Roll(CardinalDirection.West);
+            Assert.Equal(TrimInput(stateAfterRollWest), dish.ToString());
+
         }
     }
 }
