@@ -185,3 +185,14 @@ dish.RunCycles(directions, numCycles: 1000000000);
 Console.WriteLine($"Day 14 - Parabolic Reflector Dish - Torque on south hinge after 1 billion cycles: {dish.TorqueOnSouthHinge()}");
 
 #endregion
+
+
+#region Day 15 - Lens Library
+
+string lensLibraryFile = input.GetPath(day: 15);
+string lensLibraryText = File.ReadAllText(lensLibraryFile);
+int totalHash = lensLibraryText.Split(",").Select(element => element.Trim()).Sum(element => LensLibrary.GetHash(element));
+
+Console.WriteLine($"Day 15 - Lens Library - Total hash: {totalHash}");
+
+#endregion

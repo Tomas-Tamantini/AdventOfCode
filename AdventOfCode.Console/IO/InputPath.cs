@@ -28,6 +28,7 @@ namespace AdventOfCode.Console.IO
                 "HotSprings",
                 "PointOfIncidence",
                 "ParabolicReflectorDish",
+                "LensLibrary",
             };
             return Path.Combine(inputFolder, $"{inputFiles[day - 1]}Input.txt");
         }
