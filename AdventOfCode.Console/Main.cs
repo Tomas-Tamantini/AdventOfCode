@@ -192,7 +192,9 @@ Console.WriteLine($"Day 14 - Parabolic Reflector Dish - Torque on south hinge af
 string lensLibraryFile = input.GetPath(day: 15);
 string lensLibraryText = File.ReadAllText(lensLibraryFile);
 int totalHash = lensLibraryText.Split(",").Select(element => element.Trim()).Sum(element => LensLibrary.GetHash(element));
-
 Console.WriteLine($"Day 15 - Lens Library - Total hash: {totalHash}");
+LensLibrary lensLibrary = parser.ParseLensLibrary(lensLibraryFile);
+int totalFocusingPower = lensLibrary.Boxes.Select((box, i) => (i + 1) * lensLibrary.BoxFocusingPower(i)).Sum();
+Console.WriteLine($"Day 15 - Lens Library - Total focusing power: {totalFocusingPower}");
 
 #endregion

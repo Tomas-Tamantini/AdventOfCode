@@ -159,5 +159,17 @@ namespace AdventOfCode.Tests
             List<PointOfIncidence> pointOfIncidences = parser.ParsePointsOfIncidence(filename);
             Assert.Equal(2, pointOfIncidences.Count);
         }
+
+        [Fact]
+        public void TestCanParseLensLibrary()
+        {
+            var filename = "LensLibraryInput.txt";
+            var fileContent = "rn=1,cm=2,rn-";
+            var fileReaderMock = new Mock<IFileReader>();
+            fileReaderMock.Setup(fr => fr.ReadAllText(filename)).Returns(fileContent);
+            var parser = new TextParser(fileReaderMock.Object);
+            LensLibrary lensLibrary = parser.ParseLensLibrary(filename);
+            Assert.Single(lensLibrary.Boxes[0]);
+        }
     }
 }

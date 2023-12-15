@@ -6,6 +6,7 @@ namespace AdventOfCode.Console.IO
     public interface IFileReader
     {
         string[] ReadAllLines(string path);
+        string ReadAllText(string path);
     }
 
     public class FileReader : IFileReader
@@ -13,6 +14,11 @@ namespace AdventOfCode.Console.IO
         public string[] ReadAllLines(string path)
         {
             return File.ReadAllLines(path, Encoding.UTF8);
+        }
+
+        public string ReadAllText(string path)
+        {
+            return File.ReadAllText(path, Encoding.UTF8);
         }
     }
 
@@ -251,6 +257,35 @@ namespace AdventOfCode.Console.IO
             currentStr = currentPattern.ToString().Trim();
             if (currentStr.Length > 0) patterns.Add(currentPattern.ToString());
             return patterns.Select(p => new PointOfIncidence(p.Trim())).ToList();
+        }
+
+        public LensLibrary ParseLensLibrary(string filename)
+        {
+            LensLibrary lensLibrary = new();
+            string rawCommands = fileReader.ReadAllText(filename);
+            string[] strCommands = rawCommands.Split(',');
+            foreach (string strCommand in strCommands)
+            {
+                RunLensLibraryCommand(lensLibrary, strCommand);
+            }
+            return lensLibrary;
+        }
+
+        private static void RunLensLibraryCommand(LensLibrary lensLibrary, string strCommand)
+        {
+            if (strCommand.Contains('='))
+            {
+                string[] commandParts = strCommand.Split('=');
+                string label = commandParts[0].Trim();
+                int focalLenght = int.Parse(commandParts[1].Trim());
+                lensLibrary.Upsert(new Lens { Label = label, FocalLenght = focalLenght });
+            }
+            else if (strCommand.Contains('-'))
+            {
+                string[] commandParts = strCommand.Split('-');
+                string label = commandParts[0].Trim();
+                lensLibrary.Remove(label);
+            }
         }
     }
 }
