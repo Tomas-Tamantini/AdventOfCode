@@ -198,3 +198,15 @@ int totalFocusingPower = lensLibrary.Boxes.Select((box, i) => (i + 1) * lensLibr
 Console.WriteLine($"Day 15 - Lens Library - Total focusing power: {totalFocusingPower}");
 
 #endregion
+
+#region Day 16 - Lava Floor
+
+string lavaFloorFile = input.GetPath(day: 16);
+string lavaFloorText = File.ReadAllText(lavaFloorFile);
+LavaContraption lavaContraption = new(lavaFloorText);
+LavaFloor lavaFloor = new(lavaContraption);
+PhotonState initialBeam = new(0, 0, CardinalDirection.East);
+lavaFloor.RunBeam(initialBeam);
+Console.WriteLine($"Day 16 - Lava Floor - Number of energized tiles: {lavaFloor.NumEnergizedTiles()}");
+
+#endregion
