@@ -125,6 +125,20 @@ namespace AdventOfCode.Console.Models
                     yield return new PhotonState(nextX, nextY, nextDirection);
             }
         }
+
+        public IEnumerable<PhotonState> StartingPhotons()
+        {
+            for (int x = 0; x < _width; x++)
+            {
+                yield return new PhotonState(x, 0, CardinalDirection.South);
+                yield return new PhotonState(x, _height - 1, CardinalDirection.North);
+            }
+            for (int y = 0; y < _height; y++)
+            {
+                yield return new PhotonState(0, y, CardinalDirection.East);
+                yield return new PhotonState(_width - 1, y, CardinalDirection.West);
+            }
+        }
     }
     public class LavaFloor
     {
@@ -157,6 +171,18 @@ namespace AdventOfCode.Console.Models
                 }
             }
             energizedTiles = visitedPhotons.Select(p => (p.X, p.Y)).ToHashSet();
+        }
+
+        public int MaxNumEnergizedTiles()
+        {
+            // TODO: Make more efficient (maybe memoization?)
+            int maxNumEnergizedTiles = 0;
+            foreach (var initialPhoton in lavaContraption.StartingPhotons())
+            {
+                RunBeam(initialPhoton);
+                maxNumEnergizedTiles = Math.Max(maxNumEnergizedTiles, NumEnergizedTiles());
+            }
+            return maxNumEnergizedTiles;
         }
 
     }

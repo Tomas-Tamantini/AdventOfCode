@@ -208,5 +208,6 @@ LavaFloor lavaFloor = new(lavaContraption);
 PhotonState initialBeam = new(0, 0, CardinalDirection.East);
 lavaFloor.RunBeam(initialBeam);
 Console.WriteLine($"Day 16 - Lava Floor - Number of energized tiles: {lavaFloor.NumEnergizedTiles()}");
+Console.WriteLine($"Day 16 - Lava Floor - Maximum number of energized tiles: {lavaFloor.MaxNumEnergizedTiles()}");
 
 #endregion

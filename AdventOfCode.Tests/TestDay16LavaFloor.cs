@@ -76,6 +76,21 @@ namespace AdventOfCode.Tests
         }
 
         [Fact]
+        public void TestContraptionCanHaveInitialPhotonsAllAroundItsEdge()
+        {
+            string contraptionInput = "..";
+            LavaContraption lavaContraption = new(contraptionInput);
+            IEnumerable<PhotonState> startingPhotons = lavaContraption.StartingPhotons();
+            Assert.Equal(6, startingPhotons.Count());
+            Assert.Contains(new PhotonState(0, 0, CardinalDirection.East), startingPhotons);
+            Assert.Contains(new PhotonState(0, 0, CardinalDirection.South), startingPhotons);
+            Assert.Contains(new PhotonState(0, 0, CardinalDirection.North), startingPhotons);
+            Assert.Contains(new PhotonState(1, 0, CardinalDirection.West), startingPhotons);
+            Assert.Contains(new PhotonState(1, 0, CardinalDirection.South), startingPhotons);
+            Assert.Contains(new PhotonState(1, 0, CardinalDirection.North), startingPhotons);
+        }
+
+        [Fact]
         public void TestLavaFloorStartsWithZeroEnergizedTiles()
         {
             LavaFloor lavaFloor = new(lavaContraption);
@@ -107,6 +122,13 @@ namespace AdventOfCode.Tests
             PhotonState initialBeam = new(0, 0, CardinalDirection.East);
             lavaFloor.RunBeam(initialBeam);
             Assert.Equal(46, lavaFloor.NumEnergizedTiles());
+        }
+
+        [Fact]
+        public void TestCanFindInitialPhotonWhichMaximizesEnergizedTiles()
+        {
+            LavaFloor lavaFloor = new(lavaContraption);
+            Assert.Equal(51, lavaFloor.MaxNumEnergizedTiles());
         }
     }
 }
