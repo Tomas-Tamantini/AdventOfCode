@@ -211,3 +211,13 @@ Console.WriteLine($"Day 16 - Lava Floor - Number of energized tiles: {lavaFloor.
 Console.WriteLine($"Day 16 - Lava Floor - Maximum number of energized tiles: {lavaFloor.MaxNumEnergizedTiles()}");
 
 #endregion
+
+#region Day 17 - Clumsy Crucible
+
+string clumsyCrucibleFile = input.GetPath(day: 17);
+string clumsyCrucibleText = File.ReadAllText(clumsyCrucibleFile);
+ClumsyCrucible clumsyCrucible = new(clumsyCrucibleText);
+int minimumHeatLoss = clumsyCrucible.MinimumHeatLoss();
+Console.WriteLine($"Day 17 - Clumsy Crucible - Minimum heat loss: {minimumHeatLoss}");
+
+#endregion
