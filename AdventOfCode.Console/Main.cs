@@ -216,8 +216,13 @@ Console.WriteLine($"Day 16 - Lava Floor - Maximum number of energized tiles: {la
 
 string clumsyCrucibleFile = input.GetPath(day: 17);
 string clumsyCrucibleText = File.ReadAllText(clumsyCrucibleFile);
-ClumsyCrucible clumsyCrucible = new(clumsyCrucibleText);
-int minimumHeatLoss = clumsyCrucible.MinimumHeatLoss();
-Console.WriteLine($"Day 17 - Clumsy Crucible - Minimum heat loss: {minimumHeatLoss}");
+
+CrucibleInertia inertiaSmallCrucible = new(MinStepsSameDirection: null, MaxStepsSameDirection: 3);
+ClumsyCrucible smallCrucible = new(clumsyCrucibleText, inertiaSmallCrucible);
+Console.WriteLine($"Day 17 - Clumsy Crucible - Minimum heat loss for small crucible: {smallCrucible.MinimumHeatLoss()}");
+
+CrucibleInertia inertiaUltraCrucible = new(MinStepsSameDirection: 4, MaxStepsSameDirection: 10);
+ClumsyCrucible ultraCrucible = new(clumsyCrucibleText, inertiaUltraCrucible);
+Console.WriteLine($"Day 17 - Clumsy Crucible - Minimum heat loss for ultra crucible: {ultraCrucible.MinimumHeatLoss()}");
 
 #endregion

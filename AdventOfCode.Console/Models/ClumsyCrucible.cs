@@ -1,14 +1,20 @@
 namespace AdventOfCode.Console.Models
 {
     record CrucibleState(int X, int Y, CardinalDirection? Direction, int NumStepsSameDirection);
+
+    public record CrucibleInertia(int? MinStepsSameDirection, int? MaxStepsSameDirection);
+
     public class ClumsyCrucible
     {
         private readonly int[,] cityBlocks;
         private readonly int width;
         private readonly int height;
+        private readonly CrucibleInertia inertia;
+        public ClumsyCrucible(string cityBlocksStr) : this(cityBlocksStr, new CrucibleInertia(MinStepsSameDirection: null, MaxStepsSameDirection: null)) { }
 
-        public ClumsyCrucible(string cityBlocksStr)
+        public ClumsyCrucible(string cityBlocksStr, CrucibleInertia crucibleInertia)
         {
+            inertia = crucibleInertia;
             string[] cityBlocksRows = cityBlocksStr.Split(Environment.NewLine);
             width = cityBlocksRows[0].Trim().Length;
             height = cityBlocksRows.Length;
@@ -45,24 +51,53 @@ namespace AdventOfCode.Console.Models
             };
         }
 
+        private static int NumStepsSameDirection(CrucibleState currentState, CardinalDirection newDirection)
+        {
+            if (currentState.Direction == newDirection)
+            {
+                return currentState.NumStepsSameDirection + 1;
+            }
+            return 1;
+        }
 
-        private IEnumerable<CrucibleState> GetNeighbors(CrucibleState currentState)
+        private bool DirectionIsValid(CardinalDirection direction, CrucibleState currentState)
+        {
+            if (DirectionIsReversed(direction, currentState.Direction))
+            {
+                return false;
+            }
+            int numStepsSameDirection = NumStepsSameDirection(currentState, direction);
+            if (currentState.Direction == direction)
+            {
+                if (inertia.MaxStepsSameDirection != null && numStepsSameDirection > inertia.MaxStepsSameDirection)
+                {
+                    return false;
+                }
+            }
+            else if (currentState.Direction != null && inertia.MinStepsSameDirection != null && currentState.NumStepsSameDirection < inertia.MinStepsSameDirection)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private IEnumerable<CardinalDirection> ValidDirectionsAndNumSteps(CrucibleState currentState)
         {
             foreach (CardinalDirection direction in Enum.GetValues(typeof(CardinalDirection)))
             {
-                if (DirectionIsReversed(direction, currentState.Direction))
+                if (DirectionIsValid(direction, currentState))
                 {
-                    continue;
+                    yield return direction;
                 }
-                int numStepsSameDirection = 1;
-                if (currentState.Direction == direction)
-                {
-                    numStepsSameDirection = currentState.NumStepsSameDirection + 1;
-                    if (numStepsSameDirection > 3)
-                    {
-                        continue;
-                    }
-                }
+
+            }
+        }
+
+
+        private IEnumerable<CrucibleState> GetNeighbors(CrucibleState currentState)
+        {
+            foreach (var direction in ValidDirectionsAndNumSteps(currentState))
+            {
                 int newX = currentState.X;
                 int newY = currentState.Y;
                 switch (direction)
@@ -82,6 +117,7 @@ namespace AdventOfCode.Console.Models
                 }
                 if (IsInBounds(newX, newY))
                 {
+                    int numStepsSameDirection = NumStepsSameDirection(currentState, direction);
                     yield return new CrucibleState(newX, newY, direction, numStepsSameDirection);
                 }
             }
