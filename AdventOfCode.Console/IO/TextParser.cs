@@ -287,5 +287,26 @@ namespace AdventOfCode.Console.IO
                 lensLibrary.Remove(label);
             }
         }
+
+        public static DigCommand ParseDigCommand(string digCommandStr)
+        {
+            string[] digCommandParts = digCommandStr.Trim().Split(" ");
+            CardinalDirection direction = digCommandParts[0] switch
+            {
+                "U" => CardinalDirection.North,
+                "R" => CardinalDirection.East,
+                "D" => CardinalDirection.South,
+                _ => CardinalDirection.West,
+            };
+            int numSteps = int.Parse(digCommandParts[1]);
+            return new DigCommand(direction, numSteps);
+        }
+
+        public LavaductLagoon ParseLavaductLagoon(string filename)
+        {
+            IEnumerable<DigCommand> digPlan = fileReader.ReadAllLines(filename)
+                                 .Select(line => ParseDigCommand(line));
+            return new LavaductLagoon(digPlan);
+        }
     }
 }

@@ -226,3 +226,12 @@ ClumsyCrucible ultraCrucible = new(clumsyCrucibleText, inertiaUltraCrucible);
 Console.WriteLine($"Day 17 - Clumsy Crucible - Minimum heat loss for ultra crucible: {ultraCrucible.MinimumHeatLoss()}");
 
 #endregion
+
+#region Day 18 - Lavaduct Lagoon
+
+string lavaductLagoonFile = input.GetPath(day: 18);
+LavaductLagoon lavaductLagoon = parser.ParseLavaductLagoon(lavaductLagoonFile);
+int lagoonVolume = lavaductLagoon.Volume();
+Console.WriteLine($"Day 18 - Lavaduct Lagoon - Volume of lagoon: {lagoonVolume}");
+
+#endregion

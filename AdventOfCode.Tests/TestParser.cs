@@ -171,5 +171,38 @@ namespace AdventOfCode.Tests
             LensLibrary lensLibrary = parser.ParseLensLibrary(filename);
             Assert.Single(lensLibrary.Boxes[0]);
         }
+
+        [Fact]
+        public void TestCanParseDigCommand()
+        {
+            string digCommandStr = "R 7 (#3137a2)";
+            DigCommand digCommand = TextParser.ParseDigCommand(digCommandStr);
+            Assert.Equal(CardinalDirection.East, digCommand.Direction);
+            Assert.Equal(7, digCommand.NumSteps);
+        }
+
+        [Fact]
+        public void TestCanParseLavaductLagoon()
+        {
+            string fileContent = @"R 6 (#70c710)
+                                   D 5 (#0dc571)
+                                   L 2 (#5713f0)
+                                   D 2 (#d2c081)
+                                   R 2 (#59c680)
+                                   D 2 (#411b91)
+                                   L 5 (#8ceee2)
+                                   U 2 (#caa173)
+                                   L 1 (#1b58a2)
+                                   U 2 (#caa171)
+                                   R 2 (#7807d2)
+                                   U 3 (#a77fa3)
+                                   L 2 (#015232)
+                                   U 2 (#7a21e3)";
+            var fileReaderMock = new Mock<IFileReader>();
+            fileReaderMock.Setup(fr => fr.ReadAllLines("LavaductLagoonInput.txt")).Returns(fileContent.Split('\n'));
+            var parser = new TextParser(fileReaderMock.Object);
+            LavaductLagoon lavaductLagoon = parser.ParseLavaductLagoon("LavaductLagoonInput.txt");
+            Assert.Equal(62, lavaductLagoon.Volume());
+        }
     }
 }
