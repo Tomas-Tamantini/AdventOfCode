@@ -230,8 +230,9 @@ Console.WriteLine($"Day 17 - Clumsy Crucible - Minimum heat loss for ultra cruci
 #region Day 18 - Lavaduct Lagoon
 
 string lavaductLagoonFile = input.GetPath(day: 18);
-LavaductLagoon lavaductLagoon = parser.ParseLavaductLagoon(lavaductLagoonFile);
-int lagoonVolume = lavaductLagoon.Volume();
-Console.WriteLine($"Day 18 - Lavaduct Lagoon - Volume of lagoon: {lagoonVolume}");
+LavaductLagoon lavaductLagoonNoHex = parser.ParseLavaductLagoon(lavaductLagoonFile);
+Console.WriteLine($"Day 18 - Lavaduct Lagoon - Volume of lagoon not using hex code: {lavaductLagoonNoHex.Volume()}");
+LavaductLagoon lavaductLagoonHex = parser.ParseLavaductLagoon(lavaductLagoonFile, useHexCode: true);
+Console.WriteLine($"Day 18 - Lavaduct Lagoon - Volume of lagoon using hex code: {lavaductLagoonHex.Volume()}");
 
 #endregion

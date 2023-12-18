@@ -182,6 +182,15 @@ namespace AdventOfCode.Tests
         }
 
         [Fact]
+        public void TestCanParseDigCommandFromHexCode()
+        {
+            string digCommandStr = "R 2 (#caa173)";
+            DigCommand digCommand = TextParser.ParseDigCommandFromHexCode(digCommandStr);
+            Assert.Equal(CardinalDirection.North, digCommand.Direction);
+            Assert.Equal(829975, digCommand.NumSteps);
+        }
+
+        [Fact]
         public void TestCanParseLavaductLagoon()
         {
             string fileContent = @"R 6 (#70c710)
@@ -201,8 +210,10 @@ namespace AdventOfCode.Tests
             var fileReaderMock = new Mock<IFileReader>();
             fileReaderMock.Setup(fr => fr.ReadAllLines("LavaductLagoonInput.txt")).Returns(fileContent.Split('\n'));
             var parser = new TextParser(fileReaderMock.Object);
-            LavaductLagoon lavaductLagoon = parser.ParseLavaductLagoon("LavaductLagoonInput.txt");
-            Assert.Equal(62, lavaductLagoon.Volume());
+            LavaductLagoon lavaductLagoonWithoutHex = parser.ParseLavaductLagoon("LavaductLagoonInput.txt");
+            Assert.Equal(62, lavaductLagoonWithoutHex.Volume());
+            LavaductLagoon lavaductLagoonWithHex = parser.ParseLavaductLagoon("LavaductLagoonInput.txt", useHexCode: true);
+            Assert.Equal(952408144115, lavaductLagoonWithHex.Volume());
         }
     }
 }

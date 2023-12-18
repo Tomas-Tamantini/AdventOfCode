@@ -298,14 +298,29 @@ namespace AdventOfCode.Console.IO
                 "D" => CardinalDirection.South,
                 _ => CardinalDirection.West,
             };
-            int numSteps = int.Parse(digCommandParts[1]);
+            long numSteps = long.Parse(digCommandParts[1]);
             return new DigCommand(direction, numSteps);
         }
 
-        public LavaductLagoon ParseLavaductLagoon(string filename)
+        public static DigCommand ParseDigCommandFromHexCode(string digCommandStr)
+        {
+            string[] digCommandParts = digCommandStr.Trim().Split(" ");
+            string hexCode = digCommandParts[2].Replace("(", "").Replace(")", "");
+            long numSteps = long.Parse(hexCode[1..], System.Globalization.NumberStyles.HexNumber);
+            CardinalDirection direction = hexCode[^1] switch
+            {
+                '0' => CardinalDirection.East,
+                '1' => CardinalDirection.South,
+                '2' => CardinalDirection.West,
+                _ => CardinalDirection.North,
+            };
+            return new DigCommand(direction, numSteps / 16);
+        }
+
+        public LavaductLagoon ParseLavaductLagoon(string filename, bool useHexCode = false)
         {
             IEnumerable<DigCommand> digPlan = fileReader.ReadAllLines(filename)
-                                 .Select(line => ParseDigCommand(line));
+                                                         .Select(line => useHexCode ? ParseDigCommandFromHexCode(line) : ParseDigCommand(line));
             return new LavaductLagoon(digPlan);
         }
     }
