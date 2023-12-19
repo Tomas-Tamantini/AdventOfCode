@@ -262,9 +262,9 @@ namespace AdventOfCode.Tests
             var fileReaderMock = new Mock<IFileReader>();
             fileReaderMock.Setup(fr => fr.ReadAllLines("MachinePartRulesInput.txt")).Returns(fileContent.Split('\n'));
             var parser = new TextParser(fileReaderMock.Object);
-            (Aplenty aplenty, IEnumerable<MachinePartRating> ratings) = parser.ParseAplenty("MachinePartRulesInput.txt");
+            (Aplenty aplenty, IEnumerable<MachinePartRating> ratings) = parser.ParseAplenty("MachinePartRulesInput.txt", initialRule: "in");
             Assert.Equal(5, ratings.Count());
-            Assert.Equal(3, ratings.Count(r => aplenty.MachinePartIsAccepted(r, initialRule: "in")));
+            Assert.Equal(3, ratings.Count(r => aplenty.MachinePartIsAccepted(r)));
         }
 
     }

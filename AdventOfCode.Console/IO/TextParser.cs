@@ -366,7 +366,7 @@ namespace AdventOfCode.Console.IO
             return new MachinePartRule(id: ruleId, inequalities: inequalities.ToArray(), defaultNextRule: defaultNextRuleId);
         }
 
-        public (Aplenty, IEnumerable<MachinePartRating>) ParseAplenty(string filename)
+        public (Aplenty, IEnumerable<MachinePartRating>) ParseAplenty(string filename, string initialRule = "in")
         {
             var lines = fileReader.ReadAllLines(filename);
             var rules = new List<MachinePartRule>();
@@ -390,7 +390,7 @@ namespace AdventOfCode.Console.IO
                     ratings.Add(ParseMachinePartRating(trimmedLine));
                 }
             }
-            return (new Aplenty(rules), ratings);
+            return (new Aplenty(rules, initialRule), ratings);
         }
     }
 }

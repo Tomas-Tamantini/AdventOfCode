@@ -240,8 +240,12 @@ Console.WriteLine($"Day 18 - Lavaduct Lagoon - Volume of lagoon using hex code: 
 #region Day 19 - Aplenty
 
 string aplentyFile = input.GetPath(day: 19);
-(Aplenty aplenty, IEnumerable<MachinePartRating> ratings) = parser.ParseAplenty(aplentyFile);
-IEnumerable<MachinePartRating> acceptedRatings = ratings.Where(rating => aplenty.MachinePartIsAccepted(rating, initialRule: "in"));
+(Aplenty aplenty, IEnumerable<MachinePartRating> ratings) = parser.ParseAplenty(aplentyFile, initialRule: "in");
+IEnumerable<MachinePartRating> acceptedRatings = ratings.Where(rating => aplenty.MachinePartIsAccepted(rating));
 Console.WriteLine($"Day 19 - Aplenty - Sum of all accepted ratings: {acceptedRatings.Sum(rating => rating.TotalRating)}");
+RatingRange attributeRange = new(1, 4000);
+RatingsRange attributeRanges = new(attributeRange, attributeRange, attributeRange, attributeRange);
+long numAcceptedStates = aplenty.NumAcceptedStates(attributeRanges);
+Console.WriteLine($"Day 19 - Aplenty - Number of accepted states: {numAcceptedStates}");
 
 #endregion
