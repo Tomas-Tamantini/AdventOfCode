@@ -1,7 +1,58 @@
+using System.Data.Common;
+
 namespace AdventOfCode.Console.Models
 {
+    public class RatingInequality
+    {
+        private readonly string attribute;
+        private readonly bool isLessThan;
+        private readonly int threshold;
+        private readonly string nextRuleId;
 
-    using MachinePartRule = Func<MachinePartRating, string>;
+        public RatingInequality(string attribute, bool isLessThan, int threshold, string nextRuleId)
+        {
+            this.isLessThan = isLessThan;
+            this.threshold = threshold;
+            this.attribute = attribute;
+            this.nextRuleId = nextRuleId;
+        }
+
+        public bool IsTrueFor(MachinePartRating rating)
+        {
+            int ratingValue = (int)rating.GetType().GetProperty(attribute).GetValue(rating);
+            return isLessThan ? ratingValue < threshold : ratingValue > threshold;
+        }
+
+        public string NextRuleId => nextRuleId;
+    }
+
+    public class MachinePartRule
+    {
+        private string id;
+        private readonly RatingInequality[] inequalities;
+        private readonly string defaultNextRuleId;
+
+        public MachinePartRule(string id, RatingInequality[] inequalities, string defaultNextRule)
+        {
+            this.id = id;
+            this.inequalities = inequalities;
+            this.defaultNextRuleId = defaultNextRule;
+        }
+
+        public string Id => id;
+
+        public string Invoke(MachinePartRating rating)
+        {
+            foreach (RatingInequality inequality in inequalities)
+            {
+                if (inequality.IsTrueFor(rating))
+                {
+                    return inequality.NextRuleId;
+                }
+            }
+            return defaultNextRuleId;
+        }
+    }
 
     enum TerminalStates
     {
@@ -17,9 +68,9 @@ namespace AdventOfCode.Console.Models
     {
         private readonly Dictionary<string, MachinePartRule> rules;
 
-        public Aplenty(Dictionary<string, MachinePartRule> rules)
+        public Aplenty(IEnumerable<MachinePartRule> rules)
         {
-            this.rules = rules;
+            this.rules = rules.ToDictionary(rule => rule.Id);
         }
 
         public bool MachinePartIsAccepted(MachinePartRating rating, string initialRule = "in")
@@ -27,7 +78,7 @@ namespace AdventOfCode.Console.Models
             MachinePartRule currentRule = rules[initialRule];
             while (currentRule != null)
             {
-                string nextRule = currentRule(rating);
+                string nextRule = currentRule.Invoke(rating);
                 if (nextRule == ((char)TerminalStates.Accepted).ToString())
                 {
                     return true;

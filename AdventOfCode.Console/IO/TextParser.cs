@@ -336,64 +336,40 @@ namespace AdventOfCode.Console.IO
             return new MachinePartRating(ratingParts["x"], ratingParts["m"], ratingParts["a"], ratingParts["s"]);
         }
 
-        private static Func<MachinePartRating, bool> ParseMachinePartCondition(string condition)
+        private static RatingInequality ParseRatingInequalitiy(string condition)
         {
-            // Parse strings of the form a<2006 or x>0
-            var parts = condition.Split('<', '>');
-            var key = parts[0];
-            var value = int.Parse(parts[1]);
-            if (condition.Contains('<'))
-                return key switch
-                {
-                    "x" => rating => rating.X < value,
-                    "m" => rating => rating.M < value,
-                    "a" => rating => rating.A < value,
-                    _ => rating => rating.S < value
-                };
-            else
-                return key switch
-                {
-                    "x" => rating => rating.X > value,
-                    "m" => rating => rating.M > value,
-                    "a" => rating => rating.A > value,
-                    _ => rating => rating.S > value
-                };
+            var parts = condition.Split('<', '>', ':');
+            string attribute = parts[0].ToUpper();
+            bool isLessThan = condition.Contains('<');
+            int threshold = int.Parse(parts[1]);
+            string nextRuleId = parts[2];
+            return new RatingInequality(attribute, isLessThan, threshold, nextRuleId);
         }
 
-        public static Func<MachinePartRating, string> ParseMachinePartRule(string line)
+        public static MachinePartRule ParseMachinePartRule(string line)
         {
-            var parts = line.Replace("{", "").Replace("}", "").Split(',');
-            List<Func<MachinePartRating, string?>> conditions = new();
-            string defaultState = "";
-            foreach (var part in parts)
+            var parts = line.Replace("}", "").Split('{');
+            string ruleId = parts[0];
+            List<RatingInequality> inequalities = new();
+            string defaultNextRuleId = "";
+            foreach (var part in parts[1].Split(','))
             {
                 if (part.Contains(':'))
                 {
-                    var conditionParts = part.Split(':');
-                    var condition = ParseMachinePartCondition(conditionParts[0]);
-                    var nextRuleId = conditionParts[1];
-                    conditions.Add(rating => condition(rating) ? nextRuleId : null);
+                    inequalities.Add(ParseRatingInequalitiy(part));
                 }
                 else
                 {
-                    defaultState = part;
+                    defaultNextRuleId = part;
                 }
             }
-            return rating =>
-            {
-                foreach (var condition in conditions)
-                {
-                    var nextRuleId = condition(rating);
-                    if (nextRuleId != null) return nextRuleId;
-                }
-                return defaultState;
-            };
+            return new MachinePartRule(id: ruleId, inequalities: inequalities.ToArray(), defaultNextRule: defaultNextRuleId);
         }
 
         public (Aplenty, IEnumerable<MachinePartRating>) ParseAplenty(string filename)
         {
             var lines = fileReader.ReadAllLines(filename);
-            var rules = new Dictionary<string, Func<MachinePartRating, string>>();
+            var rules = new List<MachinePartRule>();
             List<MachinePartRating> ratings = new();
             bool parsingRules = true;
             foreach (var line in lines)
@@ -406,10 +382,8 @@ namespace AdventOfCode.Console.IO
                 }
                 if (parsingRules)
                 {
-                    var ruleParts = trimmedLine.Split('{');
-                    var ruleId = ruleParts[0];
-                    var rule = ParseMachinePartRule(ruleParts[1]);
-                    rules.Add(ruleId, rule);
+                    var rule = ParseMachinePartRule(trimmedLine);
+                    rules.Add(rule);
                 }
                 else
                 {

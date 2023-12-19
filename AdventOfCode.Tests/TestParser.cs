@@ -230,11 +230,12 @@ namespace AdventOfCode.Tests
         [Fact]
         public void TestCanParseMachinePartRule()
         {
-            string ruleStr = "{a<2006:qkq,m>2090:A,rfg}";
-            Func<MachinePartRating, string> rule = TextParser.ParseMachinePartRule(ruleStr);
-            Assert.Equal("qkq", rule(new MachinePartRating(X: 0, M: 2091, A: 2005, S: 0)));
-            Assert.Equal("A", rule(new MachinePartRating(X: 0, M: 2091, A: 2006, S: 0)));
-            Assert.Equal("rfg", rule(new MachinePartRating(X: 0, M: 2090, A: 2006, S: 0)));
+            string ruleStr = "ruleX{a<2006:qkq,m>2090:A,rfg}";
+            var rule = TextParser.ParseMachinePartRule(ruleStr);
+            Assert.Equal("ruleX", rule.Id);
+            Assert.Equal("qkq", rule.Invoke(new MachinePartRating(X: 0, M: 2091, A: 2005, S: 0)));
+            Assert.Equal("A", rule.Invoke(new MachinePartRating(X: 0, M: 2091, A: 2006, S: 0)));
+            Assert.Equal("rfg", rule.Invoke(new MachinePartRating(X: 0, M: 2090, A: 2006, S: 0)));
         }
 
         [Fact]

@@ -5,16 +5,9 @@ namespace AdventOfCode.Tests
         [Fact]
         public void TestMachinePartCanBeAcceptedOrRejectedDependingOnRule()
         {
-            Func<MachinePartRating, string> rule = (MachinePartRating rating) =>
-            {
-                return (rating.X == 0) ? "A" : "R";
-            };
-            var rules = new Dictionary<string, Func<MachinePartRating, string>>()
-            {
-                { "in", rule }
-            };
-
-            var aplenty = new Aplenty(rules);
+            RatingInequality ratingInequality = new(attribute: "X", isLessThan: true, threshold: 1, nextRuleId: "A");
+            MachinePartRule rule = new(id: "in", inequalities: new[] { ratingInequality }, defaultNextRule: "R");
+            var aplenty = new Aplenty(new List<MachinePartRule>() { rule });
             MachinePartRating acceptRating = new(0, 0, 0, 0);
             MachinePartRating rejectRating = new(1, 0, 0, 0);
             Assert.True(aplenty.MachinePartIsAccepted(acceptRating, initialRule: "in"));
@@ -24,26 +17,15 @@ namespace AdventOfCode.Tests
         [Fact]
         public void TestRuleAreChainApplied()
         {
-            Func<MachinePartRating, string> ruleInit = (MachinePartRating rating) =>
-            {
-                if (rating.X == 0)
-                {
-                    return "rule accept";
-                }
-                return "rule reject";
-            };
-            static string ruleAccept(MachinePartRating _) => "A";
-            static string ruleReject(MachinePartRating _) => "R";
-            var rules = new Dictionary<string, Func<MachinePartRating, string>>()
-            {
-                { "init", ruleInit },
-                { "rule accept", ruleAccept },
-                { "rule reject", ruleReject },
-            };
+            RatingInequality ratingInequality = new(attribute: "X", isLessThan: false, threshold: 0, nextRuleId: "rule accept");
+            MachinePartRule ruleInit = new(id: "init", inequalities: new[] { ratingInequality }, defaultNextRule: "rule reject");
+            MachinePartRule ruleAccept = new(id: "rule accept", inequalities: Array.Empty<RatingInequality>(), defaultNextRule: "A");
+            MachinePartRule ruleReject = new(id: "rule reject", inequalities: Array.Empty<RatingInequality>(), defaultNextRule: "R");
 
-            var aplenty = new Aplenty(rules);
-            MachinePartRating acceptRating = new(0, 0, 0, 0);
-            MachinePartRating rejectRating = new(1, 0, 0, 0);
+            Aplenty aplenty = new(new List<MachinePartRule>() { ruleInit, ruleAccept, ruleReject });
+
+            MachinePartRating acceptRating = new(1, 0, 0, 0);
+            MachinePartRating rejectRating = new(0, 0, 0, 0);
             Assert.True(aplenty.MachinePartIsAccepted(acceptRating, initialRule: "init"));
             Assert.False(aplenty.MachinePartIsAccepted(rejectRating, initialRule: "init"));
         }
