@@ -323,5 +323,100 @@ namespace AdventOfCode.Console.IO
                                                          .Select(line => useHexCode ? ParseDigCommandFromHexCode(line) : ParseDigCommand(line));
             return new LavaductLagoon(digPlan);
         }
+
+        public static MachinePartRating ParseMachinePartRating(string line)
+        {
+            var parts = line.Replace("{", "").Replace("}", "").Split(',');
+            Dictionary<string, int> ratingParts = new();
+            foreach (var part in parts)
+            {
+                var keyValue = part.Split('=');
+                ratingParts.Add(keyValue[0], int.Parse(keyValue[1]));
+            }
+            return new MachinePartRating(ratingParts["x"], ratingParts["m"], ratingParts["a"], ratingParts["s"]);
+        }
+
+        private static Func<MachinePartRating, bool> ParseMachinePartCondition(string condition)
+        {
+            // Parse strings of the form a<2006 or x>0
+            var parts = condition.Split('<', '>');
+            var key = parts[0];
+            var value = int.Parse(parts[1]);
+            if (condition.Contains('<'))
+                return key switch
+                {
+                    "x" => rating => rating.X < value,
+                    "m" => rating => rating.M < value,
+                    "a" => rating => rating.A < value,
+                    _ => rating => rating.S < value
+                };
+            else
+                return key switch
+                {
+                    "x" => rating => rating.X > value,
+                    "m" => rating => rating.M > value,
+                    "a" => rating => rating.A > value,
+                    _ => rating => rating.S > value
+                };
+        }
+
+        public static Func<MachinePartRating, string> ParseMachinePartRule(string line)
+        {
+            var parts = line.Replace("{", "").Replace("}", "").Split(',');
+            List<Func<MachinePartRating, string?>> conditions = new();
+            string defaultState = "";
+            foreach (var part in parts)
+            {
+                if (part.Contains(':'))
+                {
+                    var conditionParts = part.Split(':');
+                    var condition = ParseMachinePartCondition(conditionParts[0]);
+                    var nextRuleId = conditionParts[1];
+                    conditions.Add(rating => condition(rating) ? nextRuleId : null);
+                }
+                else
+                {
+                    defaultState = part;
+                }
+            }
+            return rating =>
+            {
+                foreach (var condition in conditions)
+                {
+                    var nextRuleId = condition(rating);
+                    if (nextRuleId != null) return nextRuleId;
+                }
+                return defaultState;
+            };
+        }
+
+        public (Aplenty, IEnumerable<MachinePartRating>) ParseAplenty(string filename)
+        {
+            var lines = fileReader.ReadAllLines(filename);
+            var rules = new Dictionary<string, Func<MachinePartRating, string>>();
+            List<MachinePartRating> ratings = new();
+            bool parsingRules = true;
+            foreach (var line in lines)
+            {
+                string trimmedLine = line.Trim();
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    parsingRules = false;
+                    continue;
+                }
+                if (parsingRules)
+                {
+                    var ruleParts = trimmedLine.Split('{');
+                    var ruleId = ruleParts[0];
+                    var rule = ParseMachinePartRule(ruleParts[1]);
+                    rules.Add(ruleId, rule);
+                }
+                else
+                {
+                    ratings.Add(ParseMachinePartRating(trimmedLine));
+                }
+            }
+            return (new Aplenty(rules), ratings);
+        }
     }
 }

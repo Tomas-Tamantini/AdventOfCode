@@ -32,6 +32,7 @@ namespace AdventOfCode.Console.IO
                 "LavaFloor",
                 "ClumsyCrucible",
                 "LavaductLagoon",
+                "Aplenty",
             };
             return Path.Combine(inputFolder, $"{inputFiles[day - 1]}Input.txt");
         }

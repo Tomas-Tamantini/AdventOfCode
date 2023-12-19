@@ -215,5 +215,56 @@ namespace AdventOfCode.Tests
             LavaductLagoon lavaductLagoonWithHex = parser.ParseLavaductLagoon("LavaductLagoonInput.txt", useHexCode: true);
             Assert.Equal(952408144115, lavaductLagoonWithHex.Volume());
         }
+
+        [Fact]
+        public void TestCanParseMachinePartRating()
+        {
+            string ratingStr = "{x=787,m=2655,a=1222,s=2876}";
+            MachinePartRating rating = TextParser.ParseMachinePartRating(ratingStr);
+            Assert.Equal(787, rating.X);
+            Assert.Equal(2655, rating.M);
+            Assert.Equal(1222, rating.A);
+            Assert.Equal(2876, rating.S);
+        }
+
+        [Fact]
+        public void TestCanParseMachinePartRule()
+        {
+            string ruleStr = "{a<2006:qkq,m>2090:A,rfg}";
+            Func<MachinePartRating, string> rule = TextParser.ParseMachinePartRule(ruleStr);
+            Assert.Equal("qkq", rule(new MachinePartRating(X: 0, M: 2091, A: 2005, S: 0)));
+            Assert.Equal("A", rule(new MachinePartRating(X: 0, M: 2091, A: 2006, S: 0)));
+            Assert.Equal("rfg", rule(new MachinePartRating(X: 0, M: 2090, A: 2006, S: 0)));
+        }
+
+        [Fact]
+        public void TestCanParseRulesAndMachinePartRatingsFromInputFile()
+        {
+            string fileContent = @"px{a<2006:qkq,m>2090:A,rfg}
+                                   pv{a>1716:R,A}
+                                   lnx{m>1548:A,A}
+                                   rfg{s<537:gd,x>2440:R,A}
+                                   qs{s>3448:A,lnx}
+                                   qkq{x<1416:A,crn}
+                                   crn{x>2662:A,R}
+                                   in{s<1351:px,qqz}
+                                   qqz{s>2770:qs,m<1801:hdj,R}
+                                   gd{a>3333:R,R}
+                                   hdj{m>838:A,pv}
+
+                                   {x=787,m=2655,a=1222,s=2876}
+                                   {x=1679,m=44,a=2067,s=496}
+                                   {x=2036,m=264,a=79,s=2244}
+                                   {x=2461,m=1339,a=466,s=291}
+                                   {x=2127,m=1623,a=2188,s=1013}";
+
+            var fileReaderMock = new Mock<IFileReader>();
+            fileReaderMock.Setup(fr => fr.ReadAllLines("MachinePartRulesInput.txt")).Returns(fileContent.Split('\n'));
+            var parser = new TextParser(fileReaderMock.Object);
+            (Aplenty aplenty, IEnumerable<MachinePartRating> ratings) = parser.ParseAplenty("MachinePartRulesInput.txt");
+            Assert.Equal(5, ratings.Count());
+            Assert.Equal(3, ratings.Count(r => aplenty.MachinePartIsAccepted(r, initialRule: "in")));
+        }
+
     }
 }

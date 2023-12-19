@@ -236,3 +236,12 @@ LavaductLagoon lavaductLagoonHex = parser.ParseLavaductLagoon(lavaductLagoonFile
 Console.WriteLine($"Day 18 - Lavaduct Lagoon - Volume of lagoon using hex code: {lavaductLagoonHex.Volume()}");
 
 #endregion
+
+#region Day 19 - Aplenty
+
+string aplentyFile = input.GetPath(day: 19);
+(Aplenty aplenty, IEnumerable<MachinePartRating> ratings) = parser.ParseAplenty(aplentyFile);
+IEnumerable<MachinePartRating> acceptedRatings = ratings.Where(rating => aplenty.MachinePartIsAccepted(rating, initialRule: "in"));
+Console.WriteLine($"Day 19 - Aplenty - Sum of all accepted ratings: {acceptedRatings.Sum(rating => rating.TotalRating)}");
+
+#endregion
