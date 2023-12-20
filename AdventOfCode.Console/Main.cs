@@ -249,3 +249,14 @@ long numAcceptedStates = aplenty.NumAcceptedStates(attributeRanges);
 Console.WriteLine($"Day 19 - Aplenty - Number of accepted states: {numAcceptedStates}");
 
 #endregion
+
+#region Day 20 - Pulse Propagation
+
+string pulsePropagationFile = input.GetPath(day: 20);
+PulseCircuit pulseCircuit = parser.ParsePulseCircuit(pulsePropagationFile);
+PulsePropagation pulsePropagation = new(pulseCircuit);
+(int numLowPulses, int numHighPulses) = pulsePropagation.RunCircuit(numTimes: 1000, initialPulseIntensity: PulseIntensity.Low);
+int pulseProduct = numLowPulses * numHighPulses;
+Console.WriteLine($"Day 20 - Pulse Propagation - Product of number of low pulses and number of high pulses: {pulseProduct}");
+
+#endregion

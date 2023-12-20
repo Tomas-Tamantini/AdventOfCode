@@ -392,5 +392,55 @@ namespace AdventOfCode.Console.IO
             }
             return (new Aplenty(rules, initialRule), ratings);
         }
+
+        public PulseCircuit ParsePulseCircuit(string fileName, string broadcasterId = "broadcaster")
+        {
+            Dictionary<string, PulseModule> modules = new();
+            Dictionary<string, List<string>> moduleConnections = new();
+            foreach (string line in fileReader.ReadAllLines(fileName))
+            {
+                string[] parts = line.Split("->");
+                string moduleTypeAndId = parts[0].Trim();
+                string moduleId = broadcasterId;
+                if (moduleTypeAndId.Contains('%'))
+                {
+                    moduleId = moduleTypeAndId.Replace("%", "");
+                    modules.Add(moduleId, new FlipFlopModule { Id = moduleId });
+                }
+                else if (moduleTypeAndId.Contains('&'))
+                {
+                    moduleId = moduleTypeAndId.Replace("&", "");
+                    modules.Add(moduleId, new ConjuctionModule { Id = moduleId });
+                }
+                else
+                {
+                    modules.Add(moduleId, new BroadcastModule { Id = moduleId });
+                }
+                string[] destinations = parts[1].Split(',');
+                moduleConnections.Add(moduleId, destinations.Select(d => d.Trim()).ToList());
+            }
+
+            foreach (var moduleConnection in moduleConnections)
+            {
+                var module = modules.GetValueOrDefault(moduleConnection.Key);
+                if (module != null)
+                {
+                    foreach (var destinationId in moduleConnection.Value)
+                    {
+                        var destination = modules.GetValueOrDefault(destinationId);
+                        if (destination != null)
+                        {
+                            module.AddDestinations(destination);
+                            if (destination is ConjuctionModule conjuctionModule)
+                            {
+                                conjuctionModule.AddOrigins(module);
+                            }
+                        }
+                        else module.AddDestinations(new PulseModule { Id = destinationId });
+                    }
+                }
+            }
+            return new PulseCircuit((BroadcastModule)modules.GetValueOrDefault(broadcasterId));
+        }
     }
 }

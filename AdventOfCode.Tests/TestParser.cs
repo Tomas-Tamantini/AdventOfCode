@@ -6,6 +6,14 @@ namespace AdventOfCode.Tests
 {
     public class TestParser
     {
+        static TextParser MockedParser(string fileContent)
+        {
+            var fileReaderMock = new Mock<IFileReader>();
+            fileReaderMock.Setup(fr => fr.ReadAllLines(It.IsAny<string>())).Returns(fileContent.Split('\n'));
+            fileReaderMock.Setup(fr => fr.ReadAllText(It.IsAny<string>())).Returns(fileContent);
+            return new TextParser(fileReaderMock.Object);
+        }
+
         [Fact]
         public void TestCanParseTextIntoCubeGame()
         {
@@ -98,7 +106,6 @@ namespace AdventOfCode.Tests
         [Fact]
         public void TestCanParseCosmicExpansion()
         {
-            var filename = "CosmicExpansionInput.txt";
             var fileContent = @"...#......
                                 .......#..
                                 #.........
@@ -109,10 +116,8 @@ namespace AdventOfCode.Tests
                                 ..........
                                 .......#..
                                 #...#.....";
-            var fileReaderMock = new Mock<IFileReader>();
-            fileReaderMock.Setup(fr => fr.ReadAllLines(filename)).Returns(fileContent.Split('\n'));
-            var parser = new TextParser(fileReaderMock.Object);
-            var cosmicExpansion = parser.ParseCosmicExpansion(filename);
+            var parser = MockedParser(fileContent);
+            var cosmicExpansion = parser.ParseCosmicExpansion("input.txt");
             Assert.Equal(374, cosmicExpansion.SumDistancesBetweenAllPairsOfGalaxies());
         }
 
@@ -137,7 +142,6 @@ namespace AdventOfCode.Tests
         [Fact]
         public void TestCanParsePointsOfIncidence()
         {
-            var filename = "PointsOfIncidenceInput.txt";
             var fileContent = @"#.##..##.
                                 ..#.##.#.
                                 ##......#
@@ -153,22 +157,17 @@ namespace AdventOfCode.Tests
                                 #####.##.
                                 ..##..###
                                 #....#..#";
-            var fileReaderMock = new Mock<IFileReader>();
-            fileReaderMock.Setup(fr => fr.ReadAllLines(filename)).Returns(fileContent.Split('\n'));
-            var parser = new TextParser(fileReaderMock.Object);
-            List<PointOfIncidence> pointOfIncidences = parser.ParsePointsOfIncidence(filename);
+            var parser = MockedParser(fileContent);
+            List<PointOfIncidence> pointOfIncidences = parser.ParsePointsOfIncidence("input.txt");
             Assert.Equal(2, pointOfIncidences.Count);
         }
 
         [Fact]
         public void TestCanParseLensLibrary()
         {
-            var filename = "LensLibraryInput.txt";
             var fileContent = "rn=1,cm=2,rn-";
-            var fileReaderMock = new Mock<IFileReader>();
-            fileReaderMock.Setup(fr => fr.ReadAllText(filename)).Returns(fileContent);
-            var parser = new TextParser(fileReaderMock.Object);
-            LensLibrary lensLibrary = parser.ParseLensLibrary(filename);
+            var parser = MockedParser(fileContent);
+            LensLibrary lensLibrary = parser.ParseLensLibrary("input.txt");
             Assert.Single(lensLibrary.Boxes[0]);
         }
 
@@ -207,9 +206,7 @@ namespace AdventOfCode.Tests
                                    U 3 (#a77fa3)
                                    L 2 (#015232)
                                    U 2 (#7a21e3)";
-            var fileReaderMock = new Mock<IFileReader>();
-            fileReaderMock.Setup(fr => fr.ReadAllLines("LavaductLagoonInput.txt")).Returns(fileContent.Split('\n'));
-            var parser = new TextParser(fileReaderMock.Object);
+            var parser = MockedParser(fileContent);
             LavaductLagoon lavaductLagoonWithoutHex = parser.ParseLavaductLagoon("LavaductLagoonInput.txt");
             Assert.Equal(62, lavaductLagoonWithoutHex.Volume());
             LavaductLagoon lavaductLagoonWithHex = parser.ParseLavaductLagoon("LavaductLagoonInput.txt", useHexCode: true);
@@ -259,13 +256,26 @@ namespace AdventOfCode.Tests
                                    {x=2461,m=1339,a=466,s=291}
                                    {x=2127,m=1623,a=2188,s=1013}";
 
-            var fileReaderMock = new Mock<IFileReader>();
-            fileReaderMock.Setup(fr => fr.ReadAllLines("MachinePartRulesInput.txt")).Returns(fileContent.Split('\n'));
-            var parser = new TextParser(fileReaderMock.Object);
+            var parser = MockedParser(fileContent);
             (Aplenty aplenty, IEnumerable<MachinePartRating> ratings) = parser.ParseAplenty("MachinePartRulesInput.txt", initialRule: "in");
             Assert.Equal(5, ratings.Count());
             Assert.Equal(3, ratings.Count(r => aplenty.MachinePartIsAccepted(r)));
         }
 
+        [Fact]
+        public void TestCanParsePulseCircuit()
+        {
+            string fileContent = @"broadcaster -> a
+                                   %a -> inv, con
+                                   &inv -> b
+                                   %b -> con
+                                   &con -> output";
+            var parser = MockedParser(fileContent);
+            PulseCircuit circuit = parser.ParsePulseCircuit("PulsePropagationInput.txt");
+            (int numLowPulses, int numHighPulses) = circuit.SendInitialPulse(PulseIntensity.Low);
+            Assert.Equal(4, numLowPulses);
+            Assert.Equal(4, numHighPulses);
+
+        }
     }
 }
