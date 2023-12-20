@@ -73,16 +73,18 @@ namespace AdventOfCode.Console.Models
     public class PulseCircuit
     {
         private readonly BroadcastModule broadcastModule;
+        public int NumLowPulses { get; private set; } = 0;
+        public int NumHighPulses { get; private set; } = 0;
+        public List<PulseIntensity> PulseHistory { get; } = new();
+
         public PulseCircuit(BroadcastModule broadcastModule)
         {
             this.broadcastModule = broadcastModule;
         }
 
-        public (int, int) SendInitialPulse(PulseIntensity intensity)
+        public void SendInitialPulse(PulseIntensity intensity, string watchModuleId = "")
         {
-            int numLowPulses = 0;
-            int numHighPulses = 0;
-
+            Reset();
             Queue<Pulse> pulses = new();
             pulses.Enqueue(new Pulse(null, broadcastModule, intensity));
 
@@ -90,16 +92,21 @@ namespace AdventOfCode.Console.Models
             {
                 Pulse pulse = pulses.Dequeue();
                 if (pulse.Destination is null) continue;
-                if (pulse.Intensity == PulseIntensity.Low) numLowPulses++;
-                else numHighPulses++;
+                if (pulse.Intensity == PulseIntensity.Low) NumLowPulses++;
+                else NumHighPulses++;
+                if (pulse.Destination.Id == watchModuleId) PulseHistory.Add(pulse.Intensity);
                 foreach (var newPulse in pulse.Destination.EmitPulses(pulse))
                 {
                     pulses.Enqueue(newPulse);
                 }
             }
+        }
 
-
-            return (numLowPulses, numHighPulses);
+        private void Reset()
+        {
+            NumLowPulses = 0;
+            NumHighPulses = 0;
+            PulseHistory.Clear();
         }
     }
 
@@ -112,16 +119,28 @@ namespace AdventOfCode.Console.Models
             this.circuit = circuit;
         }
 
-        public (int, int) RunCircuit(int numTimes, PulseIntensity initialPulseIntensity)
+        public (int, int) RunCircuitAndCountPulses(int numTimes, PulseIntensity initialPulseIntensity)
         {
             (int numLow, int numHigh) = (0, 0);
             for (int i = 0; i < numTimes; i++)
             {
-                (int numLowIncrement, int numHighIncrement) = circuit.SendInitialPulse(initialPulseIntensity);
-                numLow += numLowIncrement;
-                numHigh += numHighIncrement;
+                circuit.SendInitialPulse(initialPulseIntensity);
+                numLow += circuit.NumLowPulses;
+                numHigh += circuit.NumHighPulses;
             }
             return (numLow, numHigh);
+        }
+
+        public int RunCircuitUntilGivenPulse(PulseIntensity initialPulseIntensity, string moduleToMonitor, PulseIntensity intensityToMonitor)
+        {
+            int numIterations = 1;
+            while (true)
+            {
+                circuit.SendInitialPulse(initialPulseIntensity, moduleToMonitor);
+                if (circuit.PulseHistory.Contains(intensityToMonitor)) break;
+                numIterations++;
+            }
+            return numIterations;
         }
     }
 }

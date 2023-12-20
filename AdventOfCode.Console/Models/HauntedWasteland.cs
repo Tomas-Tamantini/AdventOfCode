@@ -75,7 +75,7 @@ namespace AdventOfCode.Console.Models
             return LeastCommonMultiple(terminalStepsForStartingNodes.Select(t => (long)t.Period).ToArray());
         }
 
-        private static long LeastCommonMultiple(params long[] numbers)
+        public static long LeastCommonMultiple(params long[] numbers)
         {
             long FindGCD(long a, long b)
             {

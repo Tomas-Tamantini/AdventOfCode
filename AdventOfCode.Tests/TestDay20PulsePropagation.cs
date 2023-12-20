@@ -139,7 +139,7 @@ namespace AdventOfCode.Tests
             return circuit;
         }
 
-        private static PulseCircuit PeriodicCircuit()
+        private static PulseCircuit ComplexCircuit()
         {
             BroadcastModule broadcaster = new() { Id = "broadcaster" };
             FlipFlopModule flipFlopA = new() { Id = "a" };
@@ -165,24 +165,31 @@ namespace AdventOfCode.Tests
         {
             PulseCircuit circuit = BasicCircuit();
 
-            (int numLowPulses, int numHighPulses) = circuit.SendInitialPulse(PulseIntensity.Low);
-            Assert.Equal(8, numLowPulses);
-            Assert.Equal(4, numHighPulses);
+            circuit.SendInitialPulse(PulseIntensity.Low);
+            Assert.Equal(8, circuit.NumLowPulses);
+            Assert.Equal(4, circuit.NumHighPulses);
         }
 
-
+        [Fact]
+        public void TestCircuitCanWatchGivenModuleAndReturnPulseHistory()
+        {
+            PulseCircuit circuit = ComplexCircuit();
+            circuit.SendInitialPulse(PulseIntensity.Low, watchModuleId: "output");
+            List<PulseIntensity> expected = new() { PulseIntensity.High, PulseIntensity.Low };
+            Assert.Equal(expected, circuit.PulseHistory);
+        }
 
         [Fact]
         public void TestPulsePropagationKeepsTrackOfHighAndLowPulsesThroughMultipleCircuitRuns()
         {
             PulsePropagation propagation = new(BasicCircuit());
 
-            (int numLowPulses, int numHighPulses) = propagation.RunCircuit(numTimes: 1000, PulseIntensity.Low);
+            (int numLowPulses, int numHighPulses) = propagation.RunCircuitAndCountPulses(numTimes: 1000, PulseIntensity.Low);
             Assert.Equal(8000, numLowPulses);
             Assert.Equal(4000, numHighPulses);
 
-            propagation = new(PeriodicCircuit());
-            (numLowPulses, numHighPulses) = propagation.RunCircuit(numTimes: 1000, PulseIntensity.Low);
+            propagation = new(ComplexCircuit());
+            (numLowPulses, numHighPulses) = propagation.RunCircuitAndCountPulses(numTimes: 1000, PulseIntensity.Low);
             Assert.Equal(4250, numLowPulses);
             Assert.Equal(2750, numHighPulses);
         }

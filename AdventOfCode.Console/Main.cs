@@ -255,8 +255,21 @@ Console.WriteLine($"Day 19 - Aplenty - Number of accepted states: {numAcceptedSt
 string pulsePropagationFile = input.GetPath(day: 20);
 PulseCircuit pulseCircuit = parser.ParsePulseCircuit(pulsePropagationFile);
 PulsePropagation pulsePropagation = new(pulseCircuit);
-(int numLowPulses, int numHighPulses) = pulsePropagation.RunCircuit(numTimes: 1000, initialPulseIntensity: PulseIntensity.Low);
+(int numLowPulses, int numHighPulses) = pulsePropagation.RunCircuitAndCountPulses(numTimes: 1000, initialPulseIntensity: PulseIntensity.Low);
 int pulseProduct = numLowPulses * numHighPulses;
 Console.WriteLine($"Day 20 - Pulse Propagation - Product of number of low pulses and number of high pulses: {pulseProduct}");
+
+// Part 2 is a bit (or a lot) of a cheat. Had to notice that the output rx will only go low when ph, vn, kt and hn receive low inputs
+
+List<long> numIterationsForPrecedingModules = new();
+foreach (string moduleId in new string[] { "ph", "vn", "kt", "hn" })
+{
+    pulseCircuit = parser.ParsePulseCircuit(pulsePropagationFile);
+    pulsePropagation = new(pulseCircuit);
+    int numIterationsForModule = pulsePropagation.RunCircuitUntilGivenPulse(PulseIntensity.Low, moduleId, PulseIntensity.Low);
+    numIterationsForPrecedingModules.Add(numIterationsForModule);
+}
+long totalNumIterations = HauntedWasteland.LeastCommonMultiple(numIterationsForPrecedingModules.ToArray());
+Console.WriteLine($"Day 20 - Pulse Propagation - Number of iterations until rx is low: {totalNumIterations}");
 
 #endregion

@@ -272,9 +272,9 @@ namespace AdventOfCode.Tests
                                    &con -> output";
             var parser = MockedParser(fileContent);
             PulseCircuit circuit = parser.ParsePulseCircuit("PulsePropagationInput.txt");
-            (int numLowPulses, int numHighPulses) = circuit.SendInitialPulse(PulseIntensity.Low);
-            Assert.Equal(4, numLowPulses);
-            Assert.Equal(4, numHighPulses);
+            circuit.SendInitialPulse(PulseIntensity.Low);
+            Assert.Equal(4, circuit.NumLowPulses);
+            Assert.Equal(4, circuit.NumHighPulses);
 
         }
     }
