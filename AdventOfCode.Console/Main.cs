@@ -282,4 +282,16 @@ StepCounter stepCounter = new(garden);
 HashSet<(int, int)> possiblePositions = stepCounter.PossiblePositionsAfterNSteps(numSteps: 64);
 Console.WriteLine($"Day 21 - Step Counter - Number of possible positions after 64 steps: {possiblePositions.Count}");
 
+// Part 2 is a cheat again, noticed that the number of possible positions for positions k + 131 * n grows as a parabola, for every k, n
+// 131 is the width and height of the garden. If the garden were not square, I don't know what periodicity there would be
+
+int numSteps = 26501365;
+int period = 131; // Garden width and height
+int firstStepInParabola = numSteps % period;
+int[] stepsInParabola = new int[] { firstStepInParabola, firstStepInParabola + period, firstStepInParabola + 2 * period };
+List<long> numPossiblePositions = stepCounter.NumPossiblePositionsInPacmanGarden(stepsInParabola[^1]).ToList();
+long[] possiblePositionsInParabola = stepsInParabola.Select(index => numPossiblePositions[index]).ToArray();
+long numPossiblePositionsPacmanGarden = StepCounter.ExtrapolateParabola(firstStepInParabola, period, possiblePositionsInParabola, numSteps);
+Console.WriteLine($"Day 21 - Step Counter - Number of possible positions in infinite garden after {numSteps} steps: {numPossiblePositionsPacmanGarden}");
+
 #endregion

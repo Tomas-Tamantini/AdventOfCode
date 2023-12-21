@@ -44,6 +44,20 @@ namespace AdventOfCode.Tests
         }
 
         [Fact]
+        public void TestPositionOutsideGardenIsValidPacmanNeighbor()
+        {
+            string gardenStr = @"...
+                                 ...
+                                 #..";
+            Garden garden = new(gardenStr);
+            IEnumerable<(int, int)> neighbors = garden.PacmanNeighbors((0, 0));
+            Assert.Equal(3, neighbors.Count());
+            Assert.Contains((0, 1), neighbors);
+            Assert.Contains((1, 0), neighbors);
+            Assert.Contains((-1, 0), neighbors);
+        }
+
+        [Fact]
         public void TestGardenerCanStepInAllValidDirections()
         {
             string gardenStr = @"...
@@ -94,6 +108,28 @@ namespace AdventOfCode.Tests
             StepCounter stepCounter = new(garden);
             HashSet<(int, int)> possiblePositions = stepCounter.PossiblePositionsAfterNSteps(numSteps: 6);
             Assert.Equal(16, possiblePositions.Count);
+        }
+
+        [Fact]
+        public void TestCanListNumberOfPossiblePositionsAfterEachStepInPacmanGarden()
+        {
+            string gardenStr = @"...........
+                                 .....###.#.
+                                 .###.##..#.
+                                 ..#.#...#..
+                                 ....#.#....
+                                 .##..S####.
+                                 .##..#...#.
+                                 .......##..
+                                 .##.#.####.
+                                 .##..##.##.
+                                 ...........";
+
+            Garden garden = new(gardenStr);
+            StepCounter stepCounter = new(garden);
+            IEnumerable<long> numPossiblePositions = stepCounter.NumPossiblePositionsInPacmanGarden(totalSteps: 10);
+            List<long> expectedNumPositions = new() { 1, 2, 4, 6, 9, 13, 16, 22, 30, 41, 50 };
+            Assert.Equal(expectedNumPositions, numPossiblePositions.ToList());
         }
     }
 }
