@@ -34,6 +34,7 @@ namespace AdventOfCode.Console.IO
                 "LavaductLagoon",
                 "Aplenty",
                 "PulsePropagation",
+                "StepCounter",
             };
             return Path.Combine(inputFolder, $"{inputFiles[day - 1]}Input.txt");
         }

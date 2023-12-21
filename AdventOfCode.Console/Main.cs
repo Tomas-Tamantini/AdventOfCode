@@ -273,3 +273,13 @@ long totalNumIterations = HauntedWasteland.LeastCommonMultiple(numIterationsForP
 Console.WriteLine($"Day 20 - Pulse Propagation - Number of iterations until rx is low: {totalNumIterations}");
 
 #endregion
+
+#region Day 21 - Step Counter
+
+string stepCounterFile = input.GetPath(day: 21);
+Garden garden = new(File.ReadAllText(stepCounterFile));
+StepCounter stepCounter = new(garden);
+HashSet<(int, int)> possiblePositions = stepCounter.PossiblePositionsAfterNSteps(numSteps: 64);
+Console.WriteLine($"Day 21 - Step Counter - Number of possible positions after 64 steps: {possiblePositions.Count}");
+
+#endregion
