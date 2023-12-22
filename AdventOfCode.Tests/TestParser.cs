@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using AdventOfCode.Console.IO;
 using Moq;
 
@@ -275,7 +276,17 @@ namespace AdventOfCode.Tests
             circuit.SendInitialPulse(PulseIntensity.Low);
             Assert.Equal(4, circuit.NumLowPulses);
             Assert.Equal(4, circuit.NumHighPulses);
+        }
 
+        [Fact]
+        public void TestCanParseSandBrick()
+        {
+            SandBrick brick = TextParser.ParseSandBrick("Brick X", "9,9,176~9,5,176");
+            IEnumerable<Coordinates> bottomCoordinates = brick.BottomCoordinates();
+            Assert.Equal(5, bottomCoordinates.Count());
+            Assert.Equal(new Coordinates(9, 5, 176), bottomCoordinates.First());
+            Assert.Equal(new Coordinates(9, 9, 176), bottomCoordinates.Last());
+            Assert.Equal("Brick X", brick.Id);
         }
     }
 }

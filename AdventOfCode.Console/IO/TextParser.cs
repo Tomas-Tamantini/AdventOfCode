@@ -442,5 +442,19 @@ namespace AdventOfCode.Console.IO
             }
             return new PulseCircuit((BroadcastModule)modules.GetValueOrDefault(broadcasterId));
         }
+
+        public static SandBrick ParseSandBrick(string id, string sandBrickStr)
+        {
+            string[] coordinatesParts = sandBrickStr.Split("~");
+            int[] coordinatesStart = coordinatesParts[0].Split(",").Select(int.Parse).ToArray();
+            int[] coordinatesEnd = coordinatesParts[1].Split(",").Select(int.Parse).ToArray();
+            int x = Math.Min(coordinatesStart[0], coordinatesEnd[0]);
+            int y = Math.Min(coordinatesStart[1], coordinatesEnd[1]);
+            int z = Math.Min(coordinatesStart[2], coordinatesEnd[2]);
+            int width = Math.Abs(coordinatesStart[0] - coordinatesEnd[0]) + 1;
+            int depth = Math.Abs(coordinatesStart[1] - coordinatesEnd[1]) + 1;
+            int height = Math.Abs(coordinatesStart[2] - coordinatesEnd[2]) + 1;
+            return new SandBrick(id, new Coordinates(x, y, z), width, height, depth);
+        }
     }
 }

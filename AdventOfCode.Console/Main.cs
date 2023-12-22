@@ -295,3 +295,17 @@ long numPossiblePositionsPacmanGarden = StepCounter.ExtrapolateParabola(firstSte
 Console.WriteLine($"Day 21 - Step Counter - Number of possible positions in infinite garden after {numSteps} steps: {numPossiblePositionsPacmanGarden}");
 
 #endregion
+
+#region Day 22 - Sand Slabs
+
+string sandSlabsFile = input.GetPath(day: 22);
+List<SandBrick> bricks = File
+    .ReadAllLines(sandSlabsFile)
+    .Select((line, index) => TextParser.ParseSandBrick($"B{index + 1}", line))
+    .ToList();
+
+SandSlabs sandSlabs = new(bricks);
+sandSlabs.DropBricks();
+Console.WriteLine($"Day 22 - Sand Slabs - Number of bricks safe to disintegrate: {sandSlabs.SafeToDisintegrateBrickIds().Count()}");
+
+#endregion
