@@ -152,5 +152,16 @@ namespace AdventOfCode.Tests
             IEnumerable<string> safeBricksIds = slabs.SafeToDisintegrateBrickIds();
             Assert.Equal(new HashSet<string> { "B", "C", "D", "E", "G" }, safeBricksIds.ToHashSet());
         }
+
+        [Fact]
+        public void TestCanCountHowManyBricksFallWhenDisintegratingOne()
+        {
+            SandSlabs slabs = ExampleSlabs();
+            slabs.DropBricks();
+            Assert.Equal(6, slabs.CountBricksThatFallWhenDisintegrating("A"));
+            Assert.Equal(0, slabs.CountBricksThatFallWhenDisintegrating("B"));
+            Assert.Equal(1, slabs.CountBricksThatFallWhenDisintegrating("F"));
+            Assert.Equal(0, slabs.CountBricksThatFallWhenDisintegrating("G"));
+        }
     }
 }

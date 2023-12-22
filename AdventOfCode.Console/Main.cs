@@ -307,5 +307,7 @@ List<SandBrick> bricks = File
 SandSlabs sandSlabs = new(bricks);
 sandSlabs.DropBricks();
 Console.WriteLine($"Day 22 - Sand Slabs - Number of bricks safe to disintegrate: {sandSlabs.SafeToDisintegrateBrickIds().Count()}");
+int totalFallenBricks = bricks.Sum(brick => sandSlabs.CountBricksThatFallWhenDisintegrating(brick.Id));
+Console.WriteLine($"Day 22 - Sand Slabs - Sum of number of bricks that would fall: {totalFallenBricks}");
 
 #endregion

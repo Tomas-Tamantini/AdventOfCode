@@ -107,6 +107,7 @@ namespace AdventOfCode.Console.Models
         public SandSlabs(IEnumerable<SandBrick> bricksSnapshot)
         {
             bricks = bricksSnapshot.ToList();
+            bricks.Sort((b1, b2) => b1.BottomCoordinates().First().Z.CompareTo(b2.BottomCoordinates().First().Z));
             pile = new();
             brickSupports = new();
             brickIsSupportedBy = new();
@@ -119,9 +120,6 @@ namespace AdventOfCode.Console.Models
         {
             brickSupports.Clear();
             brickIsSupportedBy.Clear();
-
-            bricks.Sort((b1, b2) => b1.BottomCoordinates().First().Z.CompareTo(b2.BottomCoordinates().First().Z));
-
             foreach (SandBrick brick in bricks)
             {
                 HashSet<string> supportingBricksIds = pile.PlaceBrickAndReturnSupportingBrickIds(brick);
@@ -146,6 +144,22 @@ namespace AdventOfCode.Console.Models
         {
             return bricks.Select(brick => brick.Id)
                          .Where(brickId => BrickCanBeSafelyDisintegrated(brickId));
+        }
+
+        private bool BrickIsOnTheFloor(string brickId) => !BricksSupporting(brickId).Any();
+
+        public int CountBricksThatFallWhenDisintegrating(string brickId)
+        {
+            HashSet<string> fallenBricks = new() { brickId };
+            foreach (string otherBrickId in bricks.Select(brick => brick.Id))
+            {
+                if (BrickIsOnTheFloor(otherBrickId)) continue;
+                if (BricksSupporting(otherBrickId).All(supportingBrickId => fallenBricks.Contains(supportingBrickId)))
+                {
+                    fallenBricks.Add(otherBrickId);
+                }
+            }
+            return fallenBricks.Count - 1;
         }
     }
 }
