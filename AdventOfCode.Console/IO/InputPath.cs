@@ -36,6 +36,7 @@ namespace AdventOfCode.Console.IO
                 "PulsePropagation",
                 "StepCounter",
                 "SandSlabs",
+                "LongWalk",
             };
             return Path.Combine(inputFolder, $"{inputFiles[day - 1]}Input.txt");
         }

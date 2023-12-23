@@ -311,3 +311,13 @@ int totalFallenBricks = bricks.Sum(brick => sandSlabs.CountBricksThatFallWhenDis
 Console.WriteLine($"Day 22 - Sand Slabs - Sum of number of bricks that would fall: {totalFallenBricks}");
 
 #endregion
+
+#region Day 23 - A Long Walk
+
+string longWalkFile = input.GetPath(day: 23);
+Forest forest = new Forest(File.ReadAllText(longWalkFile));
+LongWalk longWalk = new(forest);
+int maxNumSteps = longWalk.LengthLongestPath() - 1;
+Console.WriteLine($"Day 23 - A Long Walk - Maximum number of steps: {maxNumSteps}");
+
+#endregion
