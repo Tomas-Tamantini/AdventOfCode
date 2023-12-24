@@ -456,5 +456,22 @@ namespace AdventOfCode.Console.IO
             int height = Math.Abs(coordinatesStart[2] - coordinatesEnd[2]) + 1;
             return new SandBrick(id, new Coordinates(x, y, z), width, height, depth);
         }
+
+        public static Hailstone ParseHailstone(string hailstoneStr)
+        {
+            string[] parts = hailstoneStr.Split("@");
+
+            string[] posParts = parts[0].Split(",");
+            long x = long.Parse(posParts[0]);
+            long y = long.Parse(posParts[1]);
+            long z = long.Parse(posParts[2]);
+
+            string[] velParts = parts[1].Split(",");
+            long vx = long.Parse(velParts[0]);
+            long vy = long.Parse(velParts[1]);
+            long vz = long.Parse(velParts[2]);
+
+            return new Hailstone(new(x, y, z), new(vx, vy, vz));
+        }
     }
 }

@@ -288,5 +288,17 @@ namespace AdventOfCode.Tests
             Assert.Equal(new Coordinates(9, 9, 176), bottomCoordinates.Last());
             Assert.Equal("Brick X", brick.Id);
         }
+
+        [Fact]
+        public void TestCanParseHailstone()
+        {
+            Hailstone hailstone = TextParser.ParseHailstone("12, 31, 28 @ -1, -2, -3");
+            Assert.Equal(12, hailstone.Pos.x);
+            Assert.Equal(31, hailstone.Pos.y);
+            Assert.Equal(28, hailstone.Pos.z);
+            Assert.Equal(-1, hailstone.Vel.x);
+            Assert.Equal(-2, hailstone.Vel.y);
+            Assert.Equal(-3, hailstone.Vel.z);
+        }
     }
 }
