@@ -60,8 +60,7 @@ namespace AdventOfCode.Tests
             Assert.Equal(5, walk.LengthLongestPath());
         }
 
-        [Fact]
-        public void TestLongestPathRunsEfficiently()
+        private static LongWalk WalkExample()
         {
             string forestStr = @"#.#####################
                                  #.......#########...###
@@ -86,8 +85,22 @@ namespace AdventOfCode.Tests
                                  #.###.###.#.###.#.#v###
                                  #.....###...###...#...#
                                  #####################.#";
-            LongWalk walk = CreateLongWalk(forestStr);
+            return CreateLongWalk(forestStr);
+        }
+
+        [Fact]
+        public void TestLongestPathRunsEfficiently()
+        {
+
+            LongWalk walk = WalkExample();
             Assert.Equal(95, walk.LengthLongestPath());
+        }
+
+        [Fact]
+        public void TestCanFindLongestPathIgnoringSlopes()
+        {
+            LongWalk walk = WalkExample();
+            Assert.Equal(155, walk.LengthLongestPathIgnoringSlopes());
         }
     }
 }

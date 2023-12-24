@@ -315,9 +315,11 @@ Console.WriteLine($"Day 22 - Sand Slabs - Sum of number of bricks that would fal
 #region Day 23 - A Long Walk
 
 string longWalkFile = input.GetPath(day: 23);
-Forest forest = new Forest(File.ReadAllText(longWalkFile));
+Forest forest = new(File.ReadAllText(longWalkFile));
 LongWalk longWalk = new(forest);
-int maxNumSteps = longWalk.LengthLongestPath() - 1;
-Console.WriteLine($"Day 23 - A Long Walk - Maximum number of steps: {maxNumSteps}");
+int maxNumStepsConsideringSlopes = longWalk.LengthLongestPath() - 1;
+Console.WriteLine($"Day 23 - A Long Walk - Maximum number of steps considering slopes: {maxNumStepsConsideringSlopes}");
+int maxNumStepsIgnoringSlopes = longWalk.LengthLongestPathIgnoringSlopes() - 1;
+Console.WriteLine($"Day 23 - A Long Walk - Maximum number of steps ignoring slopes: {maxNumStepsIgnoringSlopes}");
 
 #endregion
