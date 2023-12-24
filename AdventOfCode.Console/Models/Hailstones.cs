@@ -12,6 +12,16 @@ namespace AdventOfCode.Console.Models
             BigInteger dy = (BigInteger)y - Pos.y;
             return dy == 0 ? 0 : (double)dy / (double)Vel.y;
         }
+
+        public (BigInteger x, BigInteger y, BigInteger z) PosVelCrossProduct()
+        {
+            return (Pos.y * Vel.z - Pos.z * Vel.y, Pos.z * Vel.x - Pos.x * Vel.z, Pos.x * Vel.y - Pos.y * Vel.x);
+        }
+
+        public static (BigInteger x, BigInteger y, BigInteger z) Subtract((BigInteger x, BigInteger y, BigInteger z) a, (BigInteger x, BigInteger y, BigInteger z) b)
+        {
+            return (a.x - b.x, a.y - b.y, a.z - b.z);
+        }
     };
 
     public record BoundingBox((BigInteger x, BigInteger y) Min, (BigInteger x, BigInteger y) Max)
@@ -82,6 +92,102 @@ namespace AdventOfCode.Console.Models
         public int NumFutureXYIntersections()
         {
             return IndicesPairs().Count(pair => XYPathsWillCrossWithinBoundingBoxInTheFuture(_hailstones[pair.Item1], _hailstones[pair.Item2]));
+        }
+
+        private (BigInteger[,] A, BigInteger[] b) BuildLinearSystem()
+        {
+            (BigInteger A0x, BigInteger A0y, BigInteger A0z) = Hailstone.Subtract(_hailstones[0].Vel, _hailstones[1].Vel);
+            (BigInteger A1x, BigInteger A1y, BigInteger A1z) = Hailstone.Subtract(_hailstones[0].Vel, _hailstones[2].Vel);
+
+            (BigInteger B0x, BigInteger B0y, BigInteger B0z) = Hailstone.Subtract(_hailstones[1].Pos, _hailstones[0].Pos);
+            (BigInteger B1x, BigInteger B1y, BigInteger B1z) = Hailstone.Subtract(_hailstones[2].Pos, _hailstones[0].Pos);
+
+            (BigInteger C0x, BigInteger C0y, BigInteger C0z) = Hailstone.Subtract(_hailstones[1].PosVelCrossProduct(), _hailstones[0].PosVelCrossProduct());
+            (BigInteger C1x, BigInteger C1y, BigInteger C1z) = Hailstone.Subtract(_hailstones[2].PosVelCrossProduct(), _hailstones[0].PosVelCrossProduct());
+
+
+            BigInteger[,] A = new BigInteger[6, 6]
+            {
+                {0, -A0z, A0y, 0, -B0z, B0y},
+                {A0z, 0, -A0x, B0z, 0, -B0x},
+                {-A0y, A0x, 0, -B0y, B0x, 0},
+                {0, -A1z, A1y, 0, -B1z, B1y},
+                {A1z, 0, -A1x, B1z, 0, -B1x},
+                {-A1y, A1x, 0, -B1y, B1x, 0}
+            };
+
+            BigInteger[] b = new BigInteger[6] { C0x, C0y, C0z, C1x, C1y, C1z };
+            return (A, b);
+        }
+
+        private static BigInteger[] SolveLinearSystem(BigInteger[,] A, BigInteger[] b)
+        {
+            // Solve system using Gaussian elimination
+            int n = b.Length;
+            for (int p = 0; p < n; p++)
+            {
+                // Find pivot row and swap
+                int max = p;
+                for (int i = p + 1; i < n; i++)
+                {
+                    if (BigInteger.Abs(A[i, p]) > BigInteger.Abs(A[max, p]))
+                    {
+                        max = i;
+                    }
+                }
+
+                BigInteger[] temp = new BigInteger[n];
+                for (int i = 0; i < n; i++)
+                {
+                    temp[i] = A[p, i];
+                    A[p, i] = A[max, i];
+                    A[max, i] = temp[i];
+                }
+
+                (b[max], b[p]) = (b[p], b[max]);
+
+                // Singular or nearly singular
+                if (BigInteger.Abs(A[p, p]) <= 0)
+                {
+                    throw new Exception("Matrix is singular or nearly singular");
+                }
+
+                // Pivot within A and b
+                for (int i = p + 1; i < n; i++)
+                {
+                    BigInteger alpha = A[i, p];
+                    BigInteger beta = A[p, p];
+                    BigInteger gcd = BigInteger.GreatestCommonDivisor(alpha, beta);
+                    alpha /= gcd;
+                    beta /= gcd;
+                    b[i] = beta * b[i] - alpha * b[p];
+                    for (int j = p; j < n; j++)
+                    {
+                        A[i, j] = beta * A[i, j] - alpha * A[p, j];
+                    }
+                }
+            }
+
+            // Back substitution
+            BigInteger[] x = new BigInteger[n];
+            for (int i = n - 1; i >= 0; i--)
+            {
+                BigInteger sum = 0;
+                for (int j = i + 1; j < n; j++)
+                {
+                    sum += A[i, j] * x[j];
+                }
+
+                x[i] = (b[i] - sum) / A[i, i];
+            }
+            return x;
+        }
+
+        public Hailstone RockThatHitsAllHailstones()
+        {
+            (BigInteger[,] A, BigInteger[] b) = BuildLinearSystem();
+            BigInteger[] x = SolveLinearSystem(A, b);
+            return new Hailstone((x[0], x[1], x[2]), (x[3], x[4], x[5]));
         }
     }
 }

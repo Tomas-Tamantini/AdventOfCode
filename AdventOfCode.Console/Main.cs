@@ -333,4 +333,8 @@ Hailstones hailstonesSimulator = new(hailstones, boundingBox);
 int numXYIntersections = hailstonesSimulator.NumFutureXYIntersections();
 Console.WriteLine($"Day 24 - Hailstones - Number of future XY intersections: {numXYIntersections}");
 
+Hailstone rock = hailstonesSimulator.RockThatHitsAllHailstones();
+var sumRockCoordinates = rock.Pos.x + rock.Pos.y + rock.Pos.z;
+Console.WriteLine($"Day 24 - Hailstones - Sum of coordinates of rock that hits all hailstones: {sumRockCoordinates}");
+
 #endregion
