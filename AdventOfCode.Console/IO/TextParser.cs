@@ -473,5 +473,30 @@ namespace AdventOfCode.Console.IO
 
             return new Hailstone(new(x, y, z), new(vx, vy, vz));
         }
+
+        public WeightedUndirectedGraph ParseWeightedUndirectedGraph(string fileName)
+        {
+            var lines = fileReader.ReadAllLines(fileName);
+            var nodes = new HashSet<string>();
+            var edges = new HashSet<(string, string)>();
+            foreach (var line in lines)
+            {
+                var lineParts = line.Split(":");
+                var node = lineParts[0].Trim();
+                nodes.Add(node);
+                var neighbors = lineParts[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                foreach (var neighbor in neighbors)
+                {
+                    nodes.Add(neighbor);
+                    edges.Add((node, neighbor));
+                }
+            }
+            var graph = new WeightedUndirectedGraph(nodes);
+            foreach (var (node, neighbor) in edges)
+            {
+                graph.AddEdge(node, neighbor);
+            }
+            return graph;
+        }
     }
 }

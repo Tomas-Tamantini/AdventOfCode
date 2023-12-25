@@ -338,3 +338,14 @@ var sumRockCoordinates = rock.Pos.x + rock.Pos.y + rock.Pos.z;
 Console.WriteLine($"Day 24 - Hailstones - Sum of coordinates of rock that hits all hailstones: {sumRockCoordinates}");
 
 #endregion
+
+#region Day 25 - Snowverload
+
+Console.WriteLine($"Day 25 - Snowverload - It takes 2 or 3 minutes to run. Be patient...");
+string snowverloadFile = input.GetPath(day: 25);
+WeightedUndirectedGraph graph = parser.ParseWeightedUndirectedGraph(snowverloadFile);
+(HashSet<string> groupA, HashSet<string> groupB) = Snowverload.MinCut(graph, knownMinCut: 3);
+int productGroupSizes = groupA.Count * groupB.Count;
+Console.WriteLine($"Day 25 - Snowverload - Product of group sizes: {productGroupSizes}");
+
+#endregion
